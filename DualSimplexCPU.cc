@@ -1,66 +1,12 @@
 #include "DualSimplex.h"
+#include "PivotRowColumn.h"
+#include "MatrixTransformation.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 
 static int flag;
-static int pivotRow(Matrix const &matrix) {
-  for (int i = 1; i < matrix.rows; i++) {
-    if (cmp(matrix.e[i + 0 * matrix.m], 0) == -1) {
-      return i;
-    }
-  }
-  return 0;
-}
-static int pivotColumn(Matrix const &matrix, const int row) {
-  int ret = 0;
 
-  for (int j = 1; j < matrix.cols; j++) {
-    if (cmp(matrix.e[row + j * matrix.m], 0) == -1) {
-      if (ret == 0) {
-        ret = j;
-      } else {
-        for (int i = 0; i < matrix.rows; i++) {
-          double val1 = matrix.e[i + ret * matrix.m] * matrix.e[row + j * matrix.m];
-          double val2 = matrix.e[i + j * matrix.m] * matrix.e[row + ret * matrix.m];
-          int c = cmp(val1,val2);
-          if (c == -1) {
-            ret = j;
-            break;
-          }
-          if (c == 1) {
-            break;
-          }
-        }
-      }
-    }
-  }
-  return ret;
-}
-static void dualSimplex(Matrix &matrix, const int row, const int col) {
-  double div = - matrix.e[row + col * matrix.m];
-
-  for (int i = 0; i < matrix.rows; i++) {
-    matrix.e[i + col * matrix.m] /= div;
-  }
-
-  for(int j = 0; j < matrix.cols; j++) {
-    for(int i = 0; i < matrix.rows; i++) {
-      if ((j != col) && (i != row)) {
-        int box = i + j * matrix.m;
-        matrix.e[box] += matrix.e[i + col * matrix.m] * matrix.e[row + j * matrix.m];
-        if ((i == 0) && (j) && (cmp(matrix.e[box], 0) == -1)) {
-          std::cout << "flag = " << flag << ", col =  " << j << std::endl;
-          matrix.print("Check.txt");
-          ERROR ("negative function");
-        }
-      }
-    }
-  }
-  for (int j = 0; j < matrix.cols; j++) {
-    matrix.e[row + j * matrix.m] = (j == col ? -1.0 : 0.0);
-  }
-}
 int cpuDualSimplex (Matrix &matrix) {
   CHECK_NULL(matrix.e);
 
@@ -85,7 +31,11 @@ int cpuDualSimplex (Matrix &matrix) {
 
     //std::cout << "flag = " << flag << ", row = " << pivot_row << ", col = " << pivot_col << std::endl;
 
-    dualSimplex (matrix, pivot_row, pivot_col);
+    int err = matrixTransformCpu (matrix, pivot_row, pivot_col);
+    if (err) {
+      std::cout << "flag = " << flag << ", col =  " << err << std::endl;
+      ERROR ("negative function");
+    }
 
   }
 
@@ -148,7 +98,12 @@ int cpuDualSimplex (Matrix &matrix, Matrix &transition) {
       multip (temp_trans_2, right_temp, temp_trans_1);
     }
 
-    dualSimplex (matrix, pivot_row, pivot_col);
+    int err = matrixTransformCpu (matrix, pivot_row, pivot_col);
+    if (err) {
+      std::cout << "flag = " << flag << ", col =  " << err << std::endl;
+      ERROR ("negative function");
+    }
+
   }
 
   return 0;

@@ -8,6 +8,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cmath>
+#include "HandleError.h"
 
 #ifndef MATRIX_H_
 #define MATRIX_H_
@@ -65,8 +66,6 @@ typedef struct {
 } d_matrix;
 
 
-void multip(Matrix const &left, Matrix const &right, Matrix &answ);
-__global__ void multip(d_matrix left, d_matrix right, d_matrix answ);
 __global__ void iden_matr(d_matrix matrix);
 __global__ void copyMatrix(d_matrix left, d_matrix right);
 

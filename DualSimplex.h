@@ -10,13 +10,11 @@
 
 #include "HandleError.h"
 #include "Matrix.h"
-#include "CublasMultip.h"
+#include "MatrixMultip.h"
 
 int cpuDualSimplex (Matrix &matrix);
 int gpuDualSimplexAsync (Matrix &matrix);
 int gpuDualSimplexSync (Matrix &matrix);
-int gpuDualSimplexCublas (Matrix &matrix);
-int gpuDualSimplexSyncDev (Matrix &matrix);
 
 int cpuDualSimplex (Matrix &matrix, Matrix &transition);
 int gpuDualSimplexAsync (Matrix &matrix, d_matrix &dev_trans);

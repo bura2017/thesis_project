@@ -12,7 +12,7 @@
 #include <curand.h>
 #include <cublas_v2.h>
 #include "HandleError.h"
-#include "CublasMultip.h"
+#include "MatrixMultip.h"
 
 void cublas_multip (Matrix const &left, Matrix const &right, Matrix &answ) {
   cublasHandle_t handle;

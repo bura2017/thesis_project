@@ -11,6 +11,9 @@
 #include "HandleError.h"
 #include "Matrix.h"
 #include "MatrixMultip.h"
+#include "PivotRowColumn.h"
+#include "MatrixTransformation.h"
+#include "TransitionMatrix.h"
 
 int cpuDualSimplex (Matrix &matrix);
 int gpuDualSimplexAsync (Matrix &matrix);

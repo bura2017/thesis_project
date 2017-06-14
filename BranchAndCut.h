@@ -26,6 +26,7 @@
 
 #define MAX_NUM_OF_CUTS 500
 #define NUM_OF_DAUGHT 2
+#define BRANCH_APPROX 1e-10
 
 struct taskTree {
   int point;
@@ -117,5 +118,6 @@ struct orderList {
 };
 
 bool branchAndCut (Matrix &input);
+void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task, d_matrix &dev_trans);
 
 #endif /* BRANCHANDCUT_H_ */

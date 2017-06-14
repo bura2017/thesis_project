@@ -1,7 +1,4 @@
 #include "DualSimplex.h"
-#include "PivotRowColumn.h"
-#include "MatrixTransformation.h"
-#include "TransitionMatrix.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <iostream>

@@ -25,6 +25,7 @@ static void memFree(Matrix &matrix, d_matrix dev_trans) {
 }
 
 bool branchAndCut (Matrix &input) {
+  std::cout << "Start branching ..." << std::endl;
   num_of_probs = 0;
 
   static d_matrix dev_trans;

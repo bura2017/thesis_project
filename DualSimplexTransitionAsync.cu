@@ -6,7 +6,6 @@
 static double *dev_row; // for pivot row
 static int threads;
 static int flag;
-static double *piv_box;
 static double *piv_row;
 static cudaStream_t str_tr_ma;
 static data_async data0, data1;
@@ -38,6 +37,8 @@ static void memInit(const int rows, const int cols, int m) {
 
   data0.pin_matrix = new Matrix(rows, MAX_BLOCKS, cudaHostAllocDefault, m - rows);
   data1.pin_matrix = new Matrix(rows, MAX_BLOCKS, cudaHostAllocDefault, m - rows);
+
+  piv_row = new double[cols];
 }
 static void memFree () {
   cudaFree(data0.dev_matrix.e);
@@ -50,9 +51,7 @@ static void memFree () {
   CHECK_CUDA(cudaStreamDestroy(data0.stream));
   CHECK_CUDA(cudaStreamDestroy(data1.stream));
 
-  cudaFreeHost (piv_box);
-  cudaFreeHost (piv_row);
-
+  delete piv_row;
 
   data0.pin_matrix->freeHost();
   data1.pin_matrix->freeHost();
@@ -112,14 +111,14 @@ int gpuDualSimplexAsync (Matrix &matrix, d_matrix &dev_trans) {
     }
     //std::cout << flag << ' ' << pivot_row << ' ' << pivot_column << std::endl;
 
-    piv_box[0] = - 1 / matrix.e[pivot_row + pivot_col * matrix.m];
+    double piv_box = - 1 / matrix.e[pivot_row + pivot_col * matrix.m];
     for (int i = 0; i < matrix.cols; i++) {
       piv_row[i] = matrix.e[pivot_row + i * matrix.m];
     }
 
     int side = right_temp.m;
     iden_matr<<<side,side>>> (right_temp);
-    CHECK_CUDA(cudaMemcpy(&(right_temp.e[pivot_col + pivot_col * right_temp.m]), &(piv_box[0]),
+    CHECK_CUDA(cudaMemcpy(&(right_temp.e[pivot_col + pivot_col * right_temp.m]), &piv_box,
         sizeof(double) * 1, cudaMemcpyHostToDevice));
     side = right_temp.cols;
     CHECK_CUDA (cudaMemcpy (dev_row, piv_row, sizeof (double) * side, cudaMemcpyHostToDevice));

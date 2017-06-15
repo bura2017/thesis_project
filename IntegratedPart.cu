@@ -55,7 +55,7 @@ int main (int argc, char **argv) {
       double time = 0;
 
       int iters_man = 0;
-      {
+      /*{
         time = mtime();
         Matrix matrix(input);
         int iters_cpu = cpuDualSimplex (matrix);
@@ -128,7 +128,7 @@ int main (int argc, char **argv) {
     }
 
     //BranchAndCut testing
-    /*{
+    {
       double time = mtime();
       std::cout << (branchAndCut(input) ? "sat" : "unsat");
       time = mtime() - time;

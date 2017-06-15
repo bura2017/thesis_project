@@ -26,7 +26,7 @@
 
 #define MAX_NUM_OF_CUTS 500
 #define NUM_OF_DAUGHT 2
-#define BRANCH_APPROX 1e-10
+#define BRANCH_APPROX 0.1
 
 struct taskTree {
   int point;
@@ -51,6 +51,7 @@ struct taskTree {
     int branch_point = 0;
     double val = 0.0;
     int ints = 0;
+    double diff_best = 0;
 
     int *fix_vals = new int[matrix.cols];
     for (int i = 0; i < matrix.cols; i++) {
@@ -63,7 +64,12 @@ struct taskTree {
     for (int i = 1; i < matrix.cols; i++){
       val = matrix.e[i + 0 * matrix.m];
       int c = cmp(val, round(val));
-      if ((c != 0) && (!branch_point) && (fix_vals[i] == 0)) {
+      double diff = val - round(val);
+      if (diff < 0) {
+        diff = - diff;
+      }
+      if ((c != 0) && (fix_vals[i] == 0) && ((!branch_point) || ((branch_point) && (diff_best > diff)))) {
+        diff_best = diff;
         branch_point = i;
         val = floor(val);
       }
@@ -71,6 +77,7 @@ struct taskTree {
         ints++;
       }
     }
+    std::cout << diff_best << std::endl;
 
     if (branch_point == 0) {
       return 1;
@@ -120,4 +127,34 @@ struct orderList {
 bool branchAndCut (Matrix &input);
 void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task, d_matrix &dev_trans);
 
+struct solvedTasks {
+  solvedTasks *next[2];
+  int point;
+  int fixed;
+  int solved;
+
+  solvedTasks(int point, int fixed, int solved, int points) : point(point), fixed(fixed), solved(solved){
+    point = 0;
+    fixed = 0;
+    solved = 1;
+    int point_next = point + 1;
+    if (point_next < points) {
+      next[0] = new solvedTasks(point_next, 0, 0, points);
+      next[1] = new solvedTasks(point_next, 1, 0, points);
+    } else {
+      next[0] = NULL;
+      next[1] = NULL;
+    }
+  }
+  ~solvedTasks(){
+    if (next[0] != NULL) {
+      next[0]->~solvedTasks();
+      delete next[0];
+    }
+    if (next[1] != NULL) {
+      next[1]->~solvedTasks();
+      delete next[1];
+    }
+  }
+};
 #endif /* BRANCHANDCUT_H_ */

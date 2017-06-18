@@ -16,7 +16,6 @@
 #define MAX_BLOCKS 128
 #define MAX_LENG 1024
 #define BLOCK_SIZE 16
-#define epsilon 10e-60
 
 #define GCD(x,y) {double a = x;\
   double b = y;                \
@@ -38,6 +37,14 @@
   x /= a;                      \
   y /= a;}
 
+typedef struct {
+    int rows;
+    int cols;
+    int m;
+    double *e;
+} d_matrix;
+
+
 struct Matrix {
   int rows;
   int cols;
@@ -50,6 +57,7 @@ struct Matrix {
   Matrix(char const *file_name, int supply = 0);
   Matrix(Matrix const &input, int supply = 0);
   Matrix(Matrix const &input, unsigned int flag, int supply = 0);
+  Matrix(d_matrix const &input);
   ~Matrix();
   void freeHost();
   int print(char const *filename) const;
@@ -58,27 +66,8 @@ struct Matrix {
   Matrix &operator=(Matrix const &matrix);
 };
 
-typedef struct {
-    int rows;
-    int cols;
-    int m;
-    double *e;
-} d_matrix;
-
-
 __global__ void iden_matr(d_matrix matrix);
 __global__ void copyMatrix(d_matrix left, d_matrix right);
 
-
-__host__ __device__
-inline int cmp(double x, double y) {
-  if (x > y + epsilon) {
-    return 1;
-  }
-  if (x < y - epsilon) {
-    return -1;
-  }
-  return 0;
-}
 
 #endif /* MATRIX_H_ */

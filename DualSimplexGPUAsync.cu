@@ -3,7 +3,6 @@
 #include <cuda_runtime.h>
 #include <iostream>
 
-static double *dev_row; // for pivot row
 static int threads;
 static int flag;
 static data_async data0, data1;
@@ -28,7 +27,6 @@ static void memInit(const int rows, const int cols, int m) {
 
   CHECK_CUDA (cudaMalloc ((void**)&data0.dev_col, sizeof(double) * m));
   CHECK_CUDA (cudaMalloc ((void**)&data1.dev_col, sizeof(double) * m));
-  CHECK_CUDA (cudaMalloc ((void**)&dev_row, sizeof(double) * cols));
 
   CHECK_CUDA(cudaStreamCreate(&data0.stream));
   CHECK_CUDA(cudaStreamCreate(&data1.stream));
@@ -42,7 +40,6 @@ static void memFree () {
 
   cudaFree(data0.dev_col);
   cudaFree(data1.dev_col);
-  cudaFree(dev_row);
 
   CHECK_CUDA(cudaStreamDestroy(data0.stream));
   CHECK_CUDA(cudaStreamDestroy(data1.stream));
@@ -57,16 +54,16 @@ static void memFree () {
 int gpuDualSimplexAsync (Matrix &matrix) {
   CHECK_NULL(matrix.e);
 
-  //std::cout << "  simplex method... ";
+  //std::cout << "//=======================" << std::endl;
   memInit(matrix.rows, matrix.cols, matrix.m);
 
   while (1) {
     flag ++;
     //std::cout << flag << std::endl;
-    if (flag % 10000 == 0) {
+    if (flag % 1000000000000 == 0) {
       std::cout << "ups" << std::endl;
-      memFree ();
-      return 0;
+      //memFree ();
+      //return 0;
     }
 
     int pivot_row = pivotRow (matrix);
@@ -78,12 +75,10 @@ int gpuDualSimplexAsync (Matrix &matrix) {
     int pivot_col = pivotColumn (matrix, pivot_row);
     if (!pivot_col) {
       memFree ();
-      return 0;
+      return -flag;
     }
-    //std::cout << flag << ' ' << pivot_row << ' ' << pivot_column << std::endl;
+    //std::cout << flag << ' ' << pivot_row << ' ' << pivot_col << std::endl;
 
     matrixTransformAsync (matrix, pivot_row, pivot_col, threads, data0, data1);
   }
 }
-
-//==============================================================================================================

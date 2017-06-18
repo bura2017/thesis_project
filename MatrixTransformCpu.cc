@@ -1,4 +1,5 @@
 #include "MatrixTransformation.h"
+#include "Epsilon.h"
 #include <iostream>
 
 int matrixTransformCpu(Matrix &matrix, const int row, const int col) {

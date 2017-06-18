@@ -1,3 +1,4 @@
+
 #include "Matrix.h"
 #include <iostream>
 #include <fstream>
@@ -5,14 +6,15 @@
 #include <string.h>
 #include <cmath>
 #include "HandleError.h"
+#include "Epsilon.h"
 
 Matrix::Matrix (int rows, int cols, int supply) :
     rows(rows), cols(cols), supply(supply), m(rows + supply), e(new double[m * cols]) {
   if (rows == 0 || cols == 0) {
     CHECK_NULL(NULL);
   }
-  for (int j = 0; j < cols; j++) {
-    for (int i = 0; i < rows; i++) {
+  for (int j = 0; j < this->cols; j++) {
+    for (int i = 0; i < m; i++) {
       e[i + j * m] = 0.0;
     }
   }
@@ -34,8 +36,8 @@ Matrix::Matrix(char const *filename, int supply) : rows(0), cols(0), supply(supp
 
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
-      int num;
-      int den;
+      double num;
+      int den = 1;
       input >> num >> den;
       e[i + j * m] = (double) num / den;
     }
@@ -51,6 +53,10 @@ Matrix::Matrix(Matrix const &input, int supply) :
       e[i + j * m] = 0.0;
     }
   }
+}
+Matrix::Matrix(d_matrix const &input) :
+    rows(input.rows), cols(input.cols), supply(input.m - rows), m(input.m), e(new double[m * cols]) {
+  CHECK_CUDA(cudaMemcpy (e, input.e, sizeof(double) * m * cols, cudaMemcpyDeviceToHost));
 }
 Matrix::~Matrix() {
   if (e != NULL) {

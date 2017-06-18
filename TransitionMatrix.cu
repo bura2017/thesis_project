@@ -1,41 +1,31 @@
 #include "TransitionMatrix.h"
 #include "MatrixMultip.h"
+#include "Epsilon.h"
 
-
-int dev_trans_init(d_matrix &dev_trans, int side) {
+int dev_trans_init(d_matrix &dev_trans, Matrix &input) {
+  const int side = input.cols;
   dev_trans.rows = side;
   dev_trans.cols = side;
-  dev_trans.m = side + BLOCK_SIZE - 1;
+  dev_trans.m = side;//BLOCK_SIZE - 1;
   CHECK_CUDA(cudaMalloc(&dev_trans.e, sizeof(double) * dev_trans.m * dev_trans.m));
-  iden_matr<<<dev_trans.m, dev_trans.m>>>(dev_trans);
+
+  Matrix trans(dev_trans.m, dev_trans.m);
+  for (int i = 0; i < dev_trans.m; i++) {
+    trans.e[i + i * trans.m] = 1.0;
+  }//identity mantrix
+  for (int j = 0; j < side; j++) {
+    for (int i = 1; i < side; i++) {
+      trans.e[i + j * trans.m] = - input.e[i + j * input.m];
+      if (cmp(input.e[i + j * input.m], 0.0) == 0) {
+        trans.e[i + j * input.m] = 0.0;
+      }
+    }
+  }
+  CHECK_CUDA(cudaMemcpy (dev_trans.e, trans.e, sizeof(double) * dev_trans.m * dev_trans.m, cudaMemcpyHostToDevice));
 
   return 0;
 }
-
-__global__
-void fill_right_trans(d_matrix matrix, int col, double *row) {
-  int j = threadIdx.x;
-  __shared__ double piv_num;
-  if (j == col) {
-    piv_num = matrix.e[col + col * matrix.m];
-  }
-  __syncthreads();
-
-  if (j != col) {
-    int n = col + j * matrix.m;
-    matrix.e[n] = piv_num * row[j];
-  }
-}
-
-void modifyTransMatrAsync (int flag, int pivot_row, int pivot_col, d_matrix &temp_trans_1, d_matrix &temp_trans_2,
-    d_matrix right_temp, cudaStream_t str_tr_ma) {
-
-  dim3 blockDim(BLOCK_SIZE, BLOCK_SIZE);
-  dim3 gridDim(right_temp.m / blockDim.x, right_temp.m / blockDim.y);
-  CHECK_CUDA(cudaStreamSynchronize(str_tr_ma));
-  if (flag % 2) {
-    cublas_multip (temp_trans_1, right_temp, temp_trans_2, str_tr_ma);
-  } else {
-    cublas_multip (temp_trans_2, right_temp, temp_trans_1, str_tr_ma);
-  }
+int dev_trans_free(d_matrix &dev_trans) {
+  cudaFree(dev_trans.e);
+  return 0;
 }

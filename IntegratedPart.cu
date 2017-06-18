@@ -2,8 +2,9 @@
 #include "HandleError.h"
 #include "BranchAndCut.h"
 #include "CudaDeviceProperties.h"
-#include "Time.h"
+#include "TimeCuda.h"
 #include "GenTest.h"
+#include "Epsilon.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -33,7 +34,7 @@ int main (int argc, char **argv) {
     const int vars = 200;
     const int ineqs = 300;
 
-    //gen_test(test_num, vars, ineqs, flag);
+    gen_test(test_num, vars, ineqs, flag);
 
     char filename[MAX_LENG];
     //strcpy (filename, test_files[test_num]);
@@ -50,32 +51,33 @@ int main (int argc, char **argv) {
 
     Matrix input(fullname);
 
+    cuda_time time;
+    cmp ((double) input.cols, (double) input.rows);
+
     //Simplex testing
     {
-      double time = 0;
-
-      int iters_man = 0;
-      /*{
-        time = mtime();
+      int iters_man = 22757;
+      {
+        time.start();
         Matrix matrix(input);
         int iters_cpu = cpuDualSimplex (matrix);
-        time = mtime() - time;
+        time.stop();
         iters_man = iters_cpu;
         std::cout << iters_man << std::endl;
-        std::cout << time << std::endl;
+        std::cout << time.time() << std::endl;
         if (iters_cpu != iters_man) {
           std::cout << iters_cpu << " != " << iters_man << std::endl;
           std::cout << "ERROR wrong answer cpu" << std::endl;
         }
       }/**/
 
-      /*{
-        time = mtime();
+      {
+        time.start();
         Matrix matrix(input);
         int iters_async = gpuDualSimplexAsync (matrix);
-        time = mtime() - time;
-        std::cout << time << std::endl;
-        //std::cout << " GPU async time " << time << std::endl;
+        time.stop();
+        std::cout << time.time() << std::endl;
+        //std::cout << " GPU async time " << time.time() << std::endl;
         if (iters_async != iters_man) {
           std::cout << iters_async << " != " << iters_man << std::endl;
           std::cout << "ERROR wrong answer async" << std::endl;
@@ -83,7 +85,26 @@ int main (int argc, char **argv) {
       }/**/
 
       /*{
-        time = mtime();
+        time.start();
+        Matrix matrix0(input);
+        Matrix matrix1(input);
+        int *iters_double = gpuDualSimplexDouble (matrix0, matrix1);
+        time.stop();
+        std::cout << time.time() << std::endl;
+        std::cout << " GPU double result " << iters_double[0] << ' ' << iters_double[1] << std::endl;
+        if (iters_double[0] != iters_man) {
+          std::cout << iters_double[0] << " != " << iters_man << std::endl;
+          std::cout << "ERROR wrong answer double" << std::endl;
+        }
+        if (iters_double[1] != iters_man) {
+          std::cout << iters_double[1] << " != " << iters_man << std::endl;
+          std::cout << "ERROR wrong answer double" << std::endl;
+        }
+        delete [] iters_double;
+      }/**/
+
+      /*{
+        time.start();
         Matrix matrix(input);
         d_matrix trans_matrix;
         trans_matrix.rows = matrix.cols;
@@ -92,8 +113,8 @@ int main (int argc, char **argv) {
         CHECK_CUDA(cudaMalloc (&trans_matrix.e, sizeof(double) * trans_matrix.m * trans_matrix.cols));
         int iters_async = gpuDualSimplexAsync (matrix, trans_matrix);
         cudaFree(trans_matrix.e);
-        time = mtime() - time;
-        std::cout << time << std::endl;
+        time.stop();
+        std::cout << time.time() << std::endl;
         //std::cout << " GPU async time " << time << std::endl;
         if (iters_async != iters_man) {
           std::cout << iters_async << " != " << iters_man << std::endl;
@@ -102,11 +123,11 @@ int main (int argc, char **argv) {
       }/**/
 
       /*{
-        time = mtime();
+        time.start();
         Matrix matrix(input);
         int iters_sync = gpuDualSimplexSync (matrix);
-        time = mtime() - time;
-        std::cout << time << std::endl;
+        time.stop();
+        std::cout << time.time() << std::endl;
         if (iters_sync != iters_man) {
           std::cout << iters_sync << " != " << iters_man << std::endl;
           std::cout << "ERROR wrong answer sync" << std::endl;
@@ -114,11 +135,11 @@ int main (int argc, char **argv) {
       }/**/
 
       /*{
-        time = mtime();
+        time.start();
         Matrix matrix(input);
         int iters_sync_dev = gpuDualSimplexSyncDev (matrix);
-        time = mtime() - time;
-        std::cout << time << std::endl;
+        time.stop();
+        std::cout << time.time() << std::endl;
         if (iters_sync_dev != iters_man) {
           std::cout << iters_sync_dev << " != " << iters_man << std::endl;
           std::cout << "ERROR wrong answer sync dev" << std::endl;
@@ -128,13 +149,14 @@ int main (int argc, char **argv) {
     }
 
     //BranchAndCut testing
-    {
-      double time = mtime();
-      std::cout << (branchAndCut(input) ? "sat" : "unsat");
-      time = mtime() - time;
-      std::cout << " time " << time << std::endl << std::endl;
-    }/**/
 
+    {
+      Matrix matrix(input);
+      time.start();
+      std::cout << (branchAndBound(matrix) ? "sat" : "unsat");
+      time.stop();
+      std::cout << " time " << time.time() << std::endl << std::endl;
+    }/**/
     test_num++;
     return 0;
   }

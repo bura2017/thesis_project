@@ -16,7 +16,8 @@ void gen_test(int test_num, int vars, int ineqs, int &flag) {
   }
   of << cols << ' ' << rows << std::endl;
 
-  for (int i = 0; i < cols; i++) {
+  of << "0 1" << std::endl;
+  for (int i = 1; i < cols; i++) {
     of << "1 1" << std::endl;
   }
   for (int i = 1; i < cols; i++) {

@@ -16,5 +16,6 @@ void matrixTransform(d_matrix matrix, int piv_row, double *col_e) {
   }
   __syncthreads();
   matr[row] += piv_row_el * cache[row];
+  __syncthreads();
   matrix.e[row + col * matrix.m] = matr[row];
 }

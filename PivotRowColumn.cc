@@ -1,4 +1,5 @@
 #include "PivotRowColumn.h"
+#include "Epsilon.h"
 
 int pivotRow(Matrix const &matrix) {
   for (int i = 1; i < matrix.rows; i++) {

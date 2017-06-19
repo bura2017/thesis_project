@@ -31,10 +31,10 @@ int main (int argc, char **argv) {
   //std::cout << flag << std::endl;
 
   while (test_num < 10) {
-    const int vars = 200;
-    const int ineqs = 300;
+    const int vars = 20;
+    const int ineqs = 30;
 
-    gen_test(test_num, vars, ineqs, flag);
+    //gen_test(test_num, vars, ineqs, flag);
 
     char filename[MAX_LENG];
     //strcpy (filename, test_files[test_num]);
@@ -45,8 +45,8 @@ int main (int argc, char **argv) {
       return 0;
     }
 
-    char fullname[MAX_LENG];
-    sprintf(fullname, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/Type1/%s", filename);
+    char fullname[MAX_LENG] = "Input.txt";
+    //sprintf(fullname, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/Type1/%s", filename);
     //sprintf(fullname, "TestGenerator/%s", filename);
 
     Matrix input(fullname);
@@ -69,9 +69,13 @@ int main (int argc, char **argv) {
           std::cout << iters_cpu << " != " << iters_man << std::endl;
           std::cout << "ERROR wrong answer cpu" << std::endl;
         }
+        if (flag < 0) {
+          std::cout << "ERROR wrong answer" << std::endl;
+        }
+        std::cout << "check " << checkCorrect(input, matrix) << std::endl;
       }/**/
 
-      {
+      /*{
         time.start();
         Matrix matrix(input);
         int iters_async = gpuDualSimplexAsync (matrix);
@@ -150,14 +154,14 @@ int main (int argc, char **argv) {
 
     //BranchAndCut testing
 
-    {
+    /*{
       Matrix matrix(input);
       time.start();
       std::cout << (branchAndBound(matrix) ? "sat" : "unsat");
       time.stop();
       std::cout << " time " << time.time() << std::endl << std::endl;
     }/**/
-    test_num++;
+    //test_num++;
     return 0;
   }
 

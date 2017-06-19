@@ -32,8 +32,8 @@ int cpuDualSimplex (Matrix &matrix) {
 
     int err = matrixTransformCpu (matrix, pivot_row, pivot_col);
     if (err) {
-      std::cout << "flag = " << flag << ", col =  " << err << std::endl;
-      ERROR ("negative function");
+      std::cout << "incorrect answer " << std::endl;
+      return 0;
     }
 
   }

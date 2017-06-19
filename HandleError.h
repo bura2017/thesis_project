@@ -11,6 +11,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
+#include "Matrix.h"
 
 #define CHECK_CUDA(X) HandleCudaError (X, __FILE__, __LINE__)
 #define CHECK_NULL(X) HandleNullError (X, __FILE__, __LINE__)
@@ -21,5 +22,7 @@ void printError(const char *error, const char *file, int line);
 void HandleCudaError(cudaError_t err, const char *file, int line);
 void HandleNullError(const void *var, const char *file, int line);
 void HandleCublasError(cublasStatus_t err, const char *file, int line);
+
+int checkCorrect (Matrix &input, Matrix &output);
 
 #endif /* HANDLEERROR_H_ */

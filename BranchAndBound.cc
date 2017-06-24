@@ -4,9 +4,9 @@
 
 static int num_of_probs;
 
-static void memFree() {
+static void memFree(d_matrix transition) {
   std::cout << num_of_probs << " probs "<< std::endl;
-  //dev_trans_free(dev_trans);
+  dev_trans_free(transition);
 }
 
 bool branchAndBound (Matrix &input) {
@@ -17,10 +17,12 @@ bool branchAndBound (Matrix &input) {
   Matrix matrix0 (input, input.cols + MAX_NUM_OF_CUTS);
   Matrix matrix1 (input, input.cols + MAX_NUM_OF_CUTS);
 
-  if (gpuDualSimplexAsync (matrix0) < 0) {
+  if (gpuDualSimplexAsync (input) < 0) {
     std::cout << "first unsat" << std::endl;
     return false;
   }
+  d_matrix transition;
+  dev_trans_init(transition, input);
 
   taskTree *root = new taskTree(0, NULL, 0.0, 0);
   orderList *start_order = new orderList (root);
@@ -48,8 +50,8 @@ bool branchAndBound (Matrix &input) {
 
     taskTree *next_0 = start_order->task->next[0];
     taskTree *next_1 = start_order->task->next[1];
-    initMatrix (matrix0, input, next_0);
-    initMatrix (matrix1, input, next_1);
+    initMatrix (matrix0, input, next_0, transition);
+    initMatrix (matrix1, input, next_1, transition);
     int *result = gpuDualSimplexDouble(matrix0, matrix1);
 
     //std::cout << result[0] << ' ' << result[1] << std::endl;
@@ -63,17 +65,17 @@ bool branchAndBound (Matrix &input) {
       add_cut_1 = mirCuts(matrix1, next_1->cuts);
     }
     if ((add_cut_0 > 0) && (add_cut_1 > 0)) {
-      initMatrix (matrix0, input, next_0);
-      initMatrix (matrix1, input, next_1);
+      initMatrix (matrix0, input, next_0, transition);
+      initMatrix (matrix1, input, next_1, transition);
       delete [] result;
       result = gpuDualSimplexDouble(matrix0, matrix1);
     }
     if ((add_cut_0 > 0) && (add_cut_1 == 0)) {
-      initMatrix (matrix0, input, next_0);
+      initMatrix (matrix0, input, next_0, transition);
       result[0] = gpuDualSimplexAsync(matrix0);
     }
     if ((add_cut_0 == 0) && (add_cut_1 > 0)) {
-      initMatrix (matrix1, input, next_1);
+      initMatrix (matrix1, input, next_1, transition);
       result[1] = gpuDualSimplexAsync(matrix1);
     }
 
@@ -93,11 +95,11 @@ bool branchAndBound (Matrix &input) {
       }
       b = next_0->branchTask (matrix0, cost_rel);
       if (b == 0) {
-        memFree();
+        memFree(transition);
         return true;
       }
       if (b < 0) {
-        initMatrix (matrix0, input, next_0);
+        initMatrix (matrix0, input, next_0, transition);
         result[0] = gpuDualSimplexAsync(matrix0);
         if (result[0] > 0) {
           cost.update(next_0->prev->func - matrix0.e[0], next_0->diff, next_0->point, true);
@@ -119,11 +121,11 @@ bool branchAndBound (Matrix &input) {
       }
       b = next_1->branchTask (matrix1, cost_rel);
       if (b == 0) {
-        memFree();
+        memFree(transition);
         return true;
       }
       if (b < 0) {
-        initMatrix (matrix1, input, next_1);
+        initMatrix (matrix1, input, next_1, transition);
         result[1] = gpuDualSimplexAsync(matrix1);
         if (result[1] > 0) {
           cost.update(next_1->prev->func - matrix1.e[0], next_1->diff, next_1->point, true);
@@ -144,7 +146,7 @@ bool branchAndBound (Matrix &input) {
     start_order = start_order->next;
     delete temp;
     if (start_order == NULL) {
-      memFree();
+      memFree(transition);
       return false;
     }
 

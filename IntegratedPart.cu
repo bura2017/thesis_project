@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
+#include <fstream>
 
 int flag;
 
@@ -26,143 +27,81 @@ int main (int argc, char **argv) {
     std::cout << "Integrated device gives speed up from zero-copy memory" << std::endl;
   }
 
-  int test_num = 0;
-  flag = time(NULL);
-  //std::cout << flag << std::endl;
+  std::ofstream results("Results.txt");
 
-  while (test_num < 10) {
-    const int vars = 20;
-    const int ineqs = 30;
+  for (int i = 100; i < 501; i += 10) {
+    double cpu_time = 0.0;
+    double gpu_time = 0.0;
+    int test_num = 0;
+    flag = time(NULL);
+    while (test_num < 5) {
+      int vars = i;
+      int ineqs = i;
 
-    //gen_test(test_num, vars, ineqs, flag);
+      gen_test(test_num, vars, ineqs, flag);
 
-    char filename[MAX_LENG];
-    //strcpy (filename, test_files[test_num]);
-    sprintf(filename, "Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
-    //std::cout << filename << std::endl;
-    //std::cin >> filename;
-    if (filename[0] == '0') {
-      return 0;
-    }
+      char filename[MAX_LENG];
+      sprintf(filename, "Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
 
-    char fullname[MAX_LENG] = "Input.txt";
-    //sprintf(fullname, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/Type1/%s", filename);
-    //sprintf(fullname, "TestGenerator/%s", filename);
+      char fullname[MAX_LENG];
+      sprintf(fullname, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/%s", filename);
 
-    Matrix input(fullname);
+      Matrix input(fullname);
 
-    cuda_time time;
-    cmp ((double) input.cols, (double) input.rows);
+      cuda_time time;
+      cmp ((double) input.cols, (double) input.rows);
 
-    //Simplex testing
-    {
-      int iters_man = 22757;
+      //====================SIMPLEX TESTING=========================
       {
-        time.start();
-        Matrix matrix(input);
-        int iters_cpu = cpuDualSimplex (matrix);
-        time.stop();
-        iters_man = iters_cpu;
-        std::cout << iters_man << std::endl;
-        std::cout << time.time() << std::endl;
-        if (iters_cpu != iters_man) {
-          std::cout << iters_cpu << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer cpu" << std::endl;
-        }
-        if (flag < 0) {
-          std::cout << "ERROR wrong answer" << std::endl;
-        }
-        std::cout << "check " << checkCorrect(input, matrix) << std::endl;
-      }/**/
+        int iters_man = 0;
+
+        {
+          time.start();
+          Matrix matrix(input);
+          int iters_cpu = cpuDualSimplex (matrix);
+          time.stop();
+          iters_man = iters_cpu;
+          if (iters_man == 0) {
+            continue;
+          }
+          //std::cout << iters_man << std::endl;
+          //std::cout << time.time() << std::endl;
+          if (iters_cpu != iters_man) {
+            std::cout << iters_cpu << " != " << iters_man << std::endl;
+            std::cout << "ERROR wrong answer cpu" << std::endl;
+          }
+          //if (checkCorrect(input, matrix) == 0) {
+          //  std::cout << "ERROR wrong answer " << std::endl;
+          //}
+          cpu_time += time.time() / iters_cpu;
+        }/**/
+
+        {
+          time.start();
+          Matrix matrix(input);
+          int iters_async = gpuDualSimplexAsync (matrix);
+          time.stop();
+          //std::cout << time.time() << std::endl;
+          if (iters_async != iters_man) {
+            std::cout << iters_async << " != " << iters_man << std::endl;
+            std::cout << "ERROR wrong answer async" << std::endl;
+          }
+          gpu_time += time.time() / iters_async;
+        }/**/
+
+      }
+
+      //====================BRANCH AND BOUND========================
 
       /*{
-        time.start();
         Matrix matrix(input);
-        int iters_async = gpuDualSimplexAsync (matrix);
-        time.stop();
-        std::cout << time.time() << std::endl;
-        //std::cout << " GPU async time " << time.time() << std::endl;
-        if (iters_async != iters_man) {
-          std::cout << iters_async << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer async" << std::endl;
-        }
-      }/**/
-
-      /*{
         time.start();
-        Matrix matrix0(input);
-        Matrix matrix1(input);
-        int *iters_double = gpuDualSimplexDouble (matrix0, matrix1);
+        std::cout << (branchAndBound(matrix) ? "sat" : "unsat");
         time.stop();
-        std::cout << time.time() << std::endl;
-        std::cout << " GPU double result " << iters_double[0] << ' ' << iters_double[1] << std::endl;
-        if (iters_double[0] != iters_man) {
-          std::cout << iters_double[0] << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer double" << std::endl;
-        }
-        if (iters_double[1] != iters_man) {
-          std::cout << iters_double[1] << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer double" << std::endl;
-        }
-        delete [] iters_double;
+        std::cout << " time " << time.time() << std::endl << std::endl;
       }/**/
-
-      /*{
-        time.start();
-        Matrix matrix(input);
-        d_matrix trans_matrix;
-        trans_matrix.rows = matrix.cols;
-        trans_matrix.cols = matrix.cols;
-        trans_matrix.m = matrix.cols;
-        CHECK_CUDA(cudaMalloc (&trans_matrix.e, sizeof(double) * trans_matrix.m * trans_matrix.cols));
-        int iters_async = gpuDualSimplexAsync (matrix, trans_matrix);
-        cudaFree(trans_matrix.e);
-        time.stop();
-        std::cout << time.time() << std::endl;
-        //std::cout << " GPU async time " << time << std::endl;
-        if (iters_async != iters_man) {
-          std::cout << iters_async << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer async" << std::endl;
-        }
-      }/**/
-
-      /*{
-        time.start();
-        Matrix matrix(input);
-        int iters_sync = gpuDualSimplexSync (matrix);
-        time.stop();
-        std::cout << time.time() << std::endl;
-        if (iters_sync != iters_man) {
-          std::cout << iters_sync << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer sync" << std::endl;
-        }
-      }/**/
-
-      /*{
-        time.start();
-        Matrix matrix(input);
-        int iters_sync_dev = gpuDualSimplexSyncDev (matrix);
-        time.stop();
-        std::cout << time.time() << std::endl;
-        if (iters_sync_dev != iters_man) {
-          std::cout << iters_sync_dev << " != " << iters_man << std::endl;
-          std::cout << "ERROR wrong answer sync dev" << std::endl;
-        }
-      }/**/
-
+      test_num++;
     }
-
-    //BranchAndCut testing
-
-    /*{
-      Matrix matrix(input);
-      time.start();
-      std::cout << (branchAndBound(matrix) ? "sat" : "unsat");
-      time.stop();
-      std::cout << " time " << time.time() << std::endl << std::endl;
-    }/**/
-    //test_num++;
-    return 0;
+    results << cpu_time / gpu_time << std::endl;
   }
-
 }

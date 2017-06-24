@@ -8,7 +8,7 @@ void gen_test(int test_num, int vars, int ineqs, int &flag) {
   char filename[MAX_LEN];
   const int cols = vars + 1;
   const int rows = 1 + vars + ineqs;
-  sprintf (filename, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/Type1/Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
+  sprintf (filename, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
 
   std::ofstream of (filename);
   if (!of.is_open()) {
@@ -36,7 +36,7 @@ void gen_test(int test_num, int vars, int ineqs, int &flag) {
   int *vec = new int[vars];
 
   for (int i = 0; i < ineqs; i++) {
-    int first = 1;
+    int first = rand() % 10 + 1;
     for (int j = 0; j < vars; j ++) {
       vec[j] = rand() % 10 - 1;
       if (vec[j] > 1) {

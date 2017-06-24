@@ -6,7 +6,7 @@ int dev_trans_init(d_matrix &dev_trans, Matrix &input) {
   const int side = input.cols;
   dev_trans.rows = side;
   dev_trans.cols = side;
-  dev_trans.m = side;//BLOCK_SIZE - 1;
+  dev_trans.m = side + BLOCK_SIZE - 1;
   CHECK_CUDA(cudaMalloc(&dev_trans.e, sizeof(double) * dev_trans.m * dev_trans.m));
 
   Matrix trans(dev_trans.m, dev_trans.m);

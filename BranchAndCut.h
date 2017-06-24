@@ -56,7 +56,7 @@ struct orderList {
 };
 
 bool branchAndBound (Matrix &input);
-void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task);
+void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task, d_matrix dev_trans);
 
 int branchPoint(Matrix &matrix, int &point, double &val, double &diff_best);
 int branchPoint (Matrix &matrix, int &point, double &value, double &diff_best, pseudocost &cost);

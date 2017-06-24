@@ -55,7 +55,7 @@ struct orderList {
   orderList *pasteTask (taskTree *task) ;
 };
 
-bool branchAndBound (Matrix &input);
+int branchAndBound (Matrix &input);
 void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task, d_matrix dev_trans);
 
 int branchPoint(Matrix &matrix, int &point, double &val, double &diff_best);

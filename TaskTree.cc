@@ -48,6 +48,8 @@
     countInts(matrix);
     next[0] = new taskTree(branch_point, this, val, 0);
     next[1] = new taskTree(branch_point, this, val + 1.0, 1);
+
+    return 1;
   }
 
   int taskTree::countInts(Matrix &matrix) {

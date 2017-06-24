@@ -9,7 +9,7 @@ static void memFree(d_matrix transition) {
   dev_trans_free(transition);
 }
 
-bool branchAndBound (Matrix &input) {
+int branchAndBound (Matrix &input) {
   std::cout << "Start branch and bound ..." << std::endl;
   num_of_probs = 0;
 
@@ -19,7 +19,7 @@ bool branchAndBound (Matrix &input) {
 
   if (gpuDualSimplexAsync (input) < 0) {
     std::cout << "first unsat" << std::endl;
-    return false;
+    return -num_of_probs;
   }
   d_matrix transition;
   dev_trans_init(transition, input);
@@ -29,7 +29,7 @@ bool branchAndBound (Matrix &input) {
 
   if (root->branchTask(matrix0, NULL) == 0) {
     std::cout << "first sat" << std::endl;
-    return true;
+    return num_of_probs;
   }
 
   pseudocost cost(input.cols);
@@ -96,7 +96,7 @@ bool branchAndBound (Matrix &input) {
       b = next_0->branchTask (matrix0, cost_rel);
       if (b == 0) {
         memFree(transition);
-        return true;
+        return num_of_probs;
       }
       if (b < 0) {
         initMatrix (matrix0, input, next_0, transition);
@@ -122,7 +122,7 @@ bool branchAndBound (Matrix &input) {
       b = next_1->branchTask (matrix1, cost_rel);
       if (b == 0) {
         memFree(transition);
-        return true;
+        return num_of_probs;
       }
       if (b < 0) {
         initMatrix (matrix1, input, next_1, transition);
@@ -147,7 +147,7 @@ bool branchAndBound (Matrix &input) {
     delete temp;
     if (start_order == NULL) {
       memFree(transition);
-      return false;
+      return -num_of_probs;
     }
 
   }

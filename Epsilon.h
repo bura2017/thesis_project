@@ -11,8 +11,8 @@
 #include <iostream>
 
 inline int cmp(double x, double y) {
-  static double epsilon = pow (10, - 10 * log10(x * y));
-  //static double epsilon = 1e-60;
+  //static double epsilon = pow (10, - 10 * log10(x * y));
+  static double epsilon = 1e-10;
   if (x > y + epsilon) {
     return 1;
   }

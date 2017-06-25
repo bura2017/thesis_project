@@ -1,4 +1,5 @@
 #include "MatrixTransformation.h"
+#include <iostream>
 
 static bool getSizes (const int prev, const int col, const int max_col, int &cur, int &blocks) {
   if (prev == max_col) {
@@ -59,8 +60,9 @@ int matrixTransformAsync(Matrix &matrix, const int row, const int col, const int
     CHECK_CUDA(cudaMemcpyAsync(data1.dev_matrix.e, data1.pin_matrix->e,
         sizeof(double) * blocks[1] * data1.dev_matrix.m, cudaMemcpyHostToDevice, data1.stream));
 
-    matrixTransform<<<blocks[0],threads,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
-    matrixTransform<<<blocks[1],threads,0,data1.stream>>>(data1.dev_matrix, row, data1.dev_col);
+    //std::cout << threads << std::endl;
+    matrixTransform<<<MAX_BLOCKS,threads,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
+    matrixTransform<<<MAX_BLOCKS,threads,0,data1.stream>>>(data1.dev_matrix, row, data1.dev_col);
 
     CHECK_CUDA(cudaMemcpyAsync(data0.pin_matrix->e, data0.dev_matrix.e,
         sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
@@ -82,7 +84,7 @@ int matrixTransformAsync(Matrix &matrix, const int row, const int col, const int
         sizeof(double) * blocks[0] * matrix.m));
     CHECK_CUDA(cudaMemcpyAsync(data0.dev_matrix.e, data0.pin_matrix->e,
         sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyHostToDevice, data0.stream));
-    matrixTransform<<<blocks[0],threads,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
+    matrixTransform<<<MAX_BLOCKS,threads,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
     CHECK_CUDA(cudaMemcpyAsync(data0.pin_matrix->e, data0.dev_matrix.e,
         sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
     CHECK_CUDA(cudaStreamSynchronize(data0.stream));

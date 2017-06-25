@@ -17,7 +17,7 @@ int dev_trans_init(d_matrix &dev_trans, Matrix &input) {
     for (int i = 1; i < side; i++) {
       trans.e[i + j * trans.m] = - input.e[i + j * input.m];
       if (cmp(input.e[i + j * input.m], 0.0) == 0) {
-        trans.e[i + j * input.m] = 0.0;
+        trans.e[i + j * trans.m] = 0.0;
       }
     }
   }

@@ -24,10 +24,10 @@
 #include "DualSimplex.h"
 #include "Matrix.h"
 #include "Pseudocost.h"
+#include "Epsilon.h"
 
 #define MAX_NUM_OF_CUTS 100
 #define NUM_OF_DAUGHT 2
-#define BRANCH_APPROX 1e-10
 
 struct taskTree {
   int point;

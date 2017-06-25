@@ -37,7 +37,7 @@ int main (int argc, char **argv) {
     flag = time(NULL);
     while (test_num < 5) {
       int vars = 200;
-      int ineqs = i;
+      int ineqs = 300;
 
       //gen_test(test_num, vars, ineqs, flag);
 
@@ -60,7 +60,7 @@ int main (int argc, char **argv) {
       {
         int iters_man = 0;
 
-        {
+        /*{
           time.start();
           Matrix matrix(input);
           int iters_cpu = cpuDualSimplex (matrix);
@@ -69,7 +69,7 @@ int main (int argc, char **argv) {
           /*if (iters_man == 0) {
             continue;
           }/**/
-          std::cout << iters_man << std::endl;
+          /*std::cout << iters_man << std::endl;
           std::cout << time.time() << std::endl;
           if (iters_cpu != iters_man) {
             std::cout << iters_cpu << " != " << iters_man << std::endl;
@@ -86,7 +86,7 @@ int main (int argc, char **argv) {
 
         }/**/
 
-        {
+        /*{
           int pow = 2;
           for (int i = 1; i > 0; i++) {
             if (input.rows > pow && input.rows < pow * 2) {
@@ -115,18 +115,18 @@ int main (int argc, char **argv) {
 
       //====================BRANCH AND BOUND========================
 
-      /*{
+      {
         Matrix matrix(input);
         time.start();
-        std::cout << (branchAndBound(matrix) ? "sat" : "unsat");
+        std::cout << (branchAndBound(matrix) > 0 ? "sat" : "unsat");
         time.stop();
         std::cout << " time " << time.time() << std::endl << std::endl;
       }/**/
       test_num++;
+      return 0;
     }
     results << cpu_time / gpu_time << std::endl;
     std::cout << "Result " << cpu_time / gpu_time << std::endl;
-    return 0;
   }
 
   return 0;

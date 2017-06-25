@@ -11,11 +11,7 @@ static void memFree(d_matrix transition) {
 
 int branchAndBound (Matrix &input) {
   std::cout << "Start branch and bound ..." << std::endl;
-  num_of_probs = 0;
-
-
-  Matrix matrix0 (input, input.cols + MAX_NUM_OF_CUTS);
-  Matrix matrix1 (input, input.cols + MAX_NUM_OF_CUTS);
+  num_of_probs = 1;
 
   if (gpuDualSimplexAsync (input) < 0) {
     std::cout << "first unsat" << std::endl;
@@ -23,14 +19,18 @@ int branchAndBound (Matrix &input) {
   }
   d_matrix transition;
   dev_trans_init(transition, input);
+  std::cout << "check" << std::endl;
 
   taskTree *root = new taskTree(0, NULL, 0.0, 0);
   orderList *start_order = new orderList (root);
 
-  if (root->branchTask(matrix0, NULL) == 0) {
+  if (root->branchTask(input, NULL) == 0) {
     std::cout << "first sat" << std::endl;
     return num_of_probs;
   }
+
+  Matrix matrix0 (input, input.cols + MAX_NUM_OF_CUTS);
+  Matrix matrix1 (input, input.cols + MAX_NUM_OF_CUTS);
 
   pseudocost cost(input.cols);
   int cost_check = (input.cols / 4 < 10 ? 10 : input.cols / 4);
@@ -38,11 +38,11 @@ int branchAndBound (Matrix &input) {
 
   while (1) {
     num_of_probs++;
-    //std::cout << std::endl << "num_of_probs " << num_of_probs << std::endl;
+    std::cout << std::endl << "num_of_probs " << num_of_probs << std::endl;
 
     if (num_of_probs % 100 == 0) {
       std::cout << "ups num_of_probs = " << num_of_probs << std::endl;
-      //return false;
+      return -num_of_probs;
     }
     if (num_of_probs == cost_check) {
       cost_rel = &cost;

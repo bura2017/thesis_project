@@ -8,6 +8,7 @@
     }
   }
   int taskTree::branchTask(Matrix &matrix, pseudocost *cost) {
+    std::cout << "======branch task=======" << std::endl;
     int branch_point = 0;
     double val = 0;
     func = matrix.e[0];
@@ -22,12 +23,6 @@
     }
     for (taskTree *t = this; t != NULL; t = t->prev) {
       if (branch_point == t->point) {
-        //std::cout << "repeat " << t->num << ' ' << t->point << ' ' << t->value << ' ' << val << std::endl;
-        if (val > 1.0e+10) {
-          std::cout << "big value diff " << diff << std::endl;
-          //matrix.print("Check.txt");
-          ERROR ("Suspicious value");
-        }
         if (t->num == 0) {
           if (cmp(val, t->value) == -1) {
             t->value = val;
@@ -40,7 +35,7 @@
             return -1;
           }
         }
-        matrix.e[branch_point] = -1.49;
+        matrix.e[branch_point] = -1.1;
         return branchTask(matrix, cost);
       }
     }
@@ -60,7 +55,7 @@
       if (diff < 0.0) {
         diff = - diff;
       }
-      if (diff < BRANCH_APPROX) {
+      if (cmp(diff,0) == 0) {
         num_of_int++;
       }
     }

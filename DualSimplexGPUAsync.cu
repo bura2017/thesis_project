@@ -54,12 +54,11 @@ static void memFree () {
 int gpuDualSimplexAsync (Matrix &matrix) {
   CHECK_NULL(matrix.e);
 
-  //std::cout << "//=======================" << std::endl;
+  //std::cout << "===========simplex============" << std::endl;
   memInit(matrix.rows, matrix.cols, matrix.m);
 
   while (1) {
     flag ++;
-    //std::cout << flag << std::endl;
     if (flag % 1000000000000 == 0) {
       std::cout << "ups" << std::endl;
       //memFree ();
@@ -77,7 +76,7 @@ int gpuDualSimplexAsync (Matrix &matrix) {
       memFree ();
       return -flag;
     }
-    //std::cout << flag << ' ' << pivot_row << ' ' << pivot_col << std::endl;
+//std::cout << flag << ' ' << pivot_row << ' ' << pivot_col << std::endl;
 
     matrixTransformAsync (matrix, pivot_row, pivot_col, threads, data0, data1);
   }

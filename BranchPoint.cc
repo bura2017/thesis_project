@@ -13,7 +13,7 @@ int branchPoint(Matrix &matrix, int &point, double &value, double &diff_best) {
       if (diff < 0) {
         diff = - diff;
       }
-      if ((diff > BRANCH_APPROX) && ((!point) || ((point) && (diff_best < diff)))) {
+      if ((cmp(diff,0) == 1) && ((!point) || ((point) && (diff_best < diff)))) {
           diff_best = diff;
           point = i;
           value = floor(val);
@@ -39,7 +39,7 @@ int branchPoint (Matrix &matrix, int &point, double &value, double &diff_best, p
       if (diff < 0) {
         diff = -diff;
       }
-      if ((diff > BRANCH_APPROX)) {
+      if ((cmp(diff,0) == 1)) {
         double s = cost.score(i, val);
         if (s_best < s) {
           s_best = s;

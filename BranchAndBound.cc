@@ -19,7 +19,6 @@ int branchAndBound (Matrix &input) {
   }
   d_matrix transition;
   dev_trans_init(transition, input);
-  std::cout << "check" << std::endl;
 
   taskTree *root = new taskTree(0, NULL, 0.0, 0);
   orderList *start_order = new orderList (root);
@@ -38,7 +37,7 @@ int branchAndBound (Matrix &input) {
 
   while (1) {
     num_of_probs++;
-    std::cout << std::endl << "num_of_probs " << num_of_probs << std::endl;
+    //std::cout << std::endl << "num_of_probs " << num_of_probs << std::endl;
 
     if (num_of_probs % 100 == 0) {
       std::cout << "ups num_of_probs = " << num_of_probs << std::endl;

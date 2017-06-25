@@ -54,13 +54,13 @@ int main (int argc, char **argv) {
       Matrix input(fullname);
 
       cuda_time time;
-      cmp ((double) input.cols, (double) input.rows);
+      cmp ((float) input.cols, (float) input.rows);
 
       //====================SIMPLEX TESTING=========================
       {
         int iters_man = 0;
 
-        /*{
+        {
           time.start();
           Matrix matrix(input);
           int iters_cpu = cpuDualSimplex (matrix);
@@ -69,7 +69,7 @@ int main (int argc, char **argv) {
           /*if (iters_man == 0) {
             continue;
           }/**/
-          /*std::cout << iters_man << std::endl;
+          std::cout << iters_man << std::endl;
           std::cout << time.time() << std::endl;
           if (iters_cpu != iters_man) {
             std::cout << iters_cpu << " != " << iters_man << std::endl;
@@ -86,7 +86,7 @@ int main (int argc, char **argv) {
 
         }/**/
 
-        /*{
+        {
           int pow = 2;
           for (int i = 1; i > 0; i++) {
             if (input.rows > pow && input.rows < pow * 2) {
@@ -115,7 +115,7 @@ int main (int argc, char **argv) {
 
       //====================BRANCH AND BOUND========================
 
-      {
+      /*{
         Matrix matrix(input);
         time.start();
         std::cout << (branchAndBound(matrix) > 0 ? "sat" : "unsat");
@@ -238,7 +238,7 @@ int main (int argc, char **argv) {
       Matrix input(fullname);
 
       cuda_time time;
-      cmp ((double) input.cols, (double) input.rows);
+      cmp ((float) input.cols, (float) input.rows);
 
       //====================SIMPLEX TESTING=========================
       {

@@ -27,8 +27,8 @@ static int getSizes (int prev, int col, const int max_col, int &cur, int &blocks
 }
 
 int matrixTransformDouble (int threads, data_full_task data0, data_full_task data1) {
-  double div_0 = - data0.matrix->e[data0.piv_row + data0.piv_col * data0.matrix->m];
-  double div_1 = - data1.matrix->e[data1.piv_row + data1.piv_col * data1.matrix->m];
+  float div_0 = - data0.matrix->e[data0.piv_row + data0.piv_col * data0.matrix->m];
+  float div_1 = - data1.matrix->e[data1.piv_row + data1.piv_col * data1.matrix->m];
 
   for (int i = 0; i < data0.matrix->rows; i++) {
     data0.matrix->e[i + data0.piv_col * data0.matrix->m] /= div_0;
@@ -56,56 +56,56 @@ int matrixTransformDouble (int threads, data_full_task data0, data_full_task dat
       break;
     }
     CHECK_NULL(memcpy (data0.pin_matrix->e, &(data0.matrix->e[0 + innokentiy[0] * data0.matrix->m]),
-        sizeof(double) * blocks[0] * data0.matrix->m));
+        sizeof(float) * blocks[0] * data0.matrix->m));
     CHECK_NULL(memcpy (data1.pin_matrix->e, &(data1.matrix->e[0 + innokentiy[1] * data1.matrix->m]),
-        sizeof(double) * blocks[1] * data1.matrix->m));
+        sizeof(float) * blocks[1] * data1.matrix->m));
 
     CHECK_CUDA(cudaMemcpyAsync(data0.dev_matrix.e, data0.pin_matrix->e,
-        sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyHostToDevice, data0.stream));
+        sizeof(float) * blocks[0] * data0.dev_matrix.m, cudaMemcpyHostToDevice, data0.stream));
     CHECK_CUDA(cudaMemcpyAsync(data1.dev_matrix.e, data1.pin_matrix->e,
-        sizeof(double) * blocks[1] * data1.dev_matrix.m, cudaMemcpyHostToDevice, data1.stream));
+        sizeof(float) * blocks[1] * data1.dev_matrix.m, cudaMemcpyHostToDevice, data1.stream));
 
     matrixTransform<<<blocks[0],threads,0,data0.stream>>>(data0.dev_matrix, data0.piv_row, data0.dev_col);
     matrixTransform<<<blocks[1],threads,0,data1.stream>>>(data1.dev_matrix, data1.piv_row, data1.dev_col);
 
     CHECK_CUDA(cudaMemcpyAsync(data0.pin_matrix->e, data0.dev_matrix.e,
-        sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
+        sizeof(float) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
     CHECK_CUDA(cudaMemcpyAsync(data1.pin_matrix->e, data1.dev_matrix.e,
-        sizeof(double) * blocks[1] * data1.dev_matrix.m, cudaMemcpyDeviceToHost, data1.stream));
+        sizeof(float) * blocks[1] * data1.dev_matrix.m, cudaMemcpyDeviceToHost, data1.stream));
 
 
     CHECK_CUDA(cudaStreamSynchronize(data0.stream));
     CHECK_NULL(memcpy (&(data0.matrix->e[0 + innokentiy[0] * data0.matrix->m]), data0.pin_matrix->e,
-        sizeof(double) * blocks[0] * data0.matrix->m));
+        sizeof(float) * blocks[0] * data0.matrix->m));
 
     CHECK_CUDA(cudaStreamSynchronize(data1.stream));
     CHECK_NULL(memcpy (&(data1.matrix->e[0 + innokentiy[1] * data1.matrix->m]), data1.pin_matrix->e,
-        sizeof(double) * blocks[1] * data1.matrix->m));
+        sizeof(float) * blocks[1] * data1.matrix->m));
 
   }
   if (innokentiy[0]) {
     CHECK_NULL(memcpy (data0.pin_matrix->e, &(data0.matrix->e[0 + innokentiy[0] * data0.matrix->m]),
-        sizeof(double) * blocks[0] * data0.matrix->m));
+        sizeof(float) * blocks[0] * data0.matrix->m));
     CHECK_CUDA(cudaMemcpyAsync(data0.dev_matrix.e, data0.pin_matrix->e,
-        sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyHostToDevice, data0.stream));
+        sizeof(float) * blocks[0] * data0.dev_matrix.m, cudaMemcpyHostToDevice, data0.stream));
     matrixTransform<<<blocks[0],threads,0,data0.stream>>>(data0.dev_matrix, data0.piv_row, data0.dev_col);
     CHECK_CUDA(cudaMemcpyAsync(data0.pin_matrix->e, data0.dev_matrix.e,
-        sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
+        sizeof(float) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
     CHECK_CUDA(cudaStreamSynchronize(data0.stream));
     CHECK_NULL(memcpy (&(data0.matrix->e[0 + innokentiy[0] * data0.matrix->m]), data0.pin_matrix->e,
-        sizeof(double) * blocks[0] * data0.matrix->m));
+        sizeof(float) * blocks[0] * data0.matrix->m));
   }
   if (innokentiy[1]) {
     CHECK_NULL(memcpy (data1.pin_matrix->e, &(data1.matrix->e[0 + innokentiy[1] * data1.matrix->m]),
-        sizeof(double) * blocks[1] * data1.matrix->m));
+        sizeof(float) * blocks[1] * data1.matrix->m));
     CHECK_CUDA(cudaMemcpyAsync(data1.dev_matrix.e, data1.pin_matrix->e,
-        sizeof(double) * blocks[1] * data1.dev_matrix.m, cudaMemcpyHostToDevice, data1.stream));
+        sizeof(float) * blocks[1] * data1.dev_matrix.m, cudaMemcpyHostToDevice, data1.stream));
     matrixTransform<<<blocks[1],threads,0,data1.stream>>>(data1.dev_matrix, data1.piv_row, data1.dev_col);
     CHECK_CUDA(cudaMemcpyAsync(data1.pin_matrix->e, data1.dev_matrix.e,
-        sizeof(double) * blocks[1] * data1.dev_matrix.m, cudaMemcpyDeviceToHost, data1.stream));
+        sizeof(float) * blocks[1] * data1.dev_matrix.m, cudaMemcpyDeviceToHost, data1.stream));
     CHECK_CUDA(cudaStreamSynchronize(data1.stream));
     CHECK_NULL(memcpy (&(data1.matrix->e[0 + innokentiy[1] * data1.matrix->m]), data1.pin_matrix->e,
-        sizeof(double) * blocks[1] * data1.matrix->m));
+        sizeof(float) * blocks[1] * data1.matrix->m));
   }
 
   return 0;

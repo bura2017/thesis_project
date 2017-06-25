@@ -41,16 +41,15 @@ typedef struct {
     int rows;
     int cols;
     int m;
-    double *e;
-} d_matrix;
-
+    float *e;
+}d_matrix;
 
 struct Matrix {
   int rows;
   int cols;
   int supply;
   int m;
-  double *e;
+  float *e;
 
   Matrix(int rows, int cols, int supply = 0);
   Matrix (int rows, int cols, unsigned int flag, int supply = 0);

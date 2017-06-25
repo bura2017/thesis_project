@@ -1,4 +1,3 @@
-
 #include "Matrix.h"
 #include <iostream>
 #include <fstream>
@@ -9,7 +8,7 @@
 #include "Epsilon.h"
 
 Matrix::Matrix (int rows, int cols, int supply) :
-    rows(rows), cols(cols), supply(supply), m(rows + supply), e(new double[m * cols]) {
+    rows(rows), cols(cols), supply(supply), m(rows + supply), e(new float[m * cols]) {
   if (rows == 0 || cols == 0) {
     CHECK_NULL(NULL);
   }
@@ -32,19 +31,19 @@ Matrix::Matrix(char const *filename, int supply) : rows(0), cols(0), supply(supp
   }
   m = rows + supply;
   //std::cout << cols << ' ' << rows << std::endl;
-  e = new double[m * cols];
+  e = new float[m * cols];
 
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
-      double num;
-      double den = 1.0;
+      float num;
+      float den = 1.0;
       input >> num >> den;
-      e[i + j * m] = (double) num / den;
+      e[i + j * m] = (float) num / den;
     }
   }
 }
 Matrix::Matrix(Matrix const &input, int supply) :
-    rows(input.rows), cols(input.cols), supply(input.supply + supply), m(input.m + supply), e(new double[m * cols]) {
+    rows(input.rows), cols(input.cols), supply(input.supply + supply), m(input.m + supply), e(new float[m * cols]) {
   for (int j = 0; j < cols; j ++) {
     for (int i = 0; i < rows; i++) {
       e[i + j * m] = input.e[i + j * input.m];
@@ -55,8 +54,8 @@ Matrix::Matrix(Matrix const &input, int supply) :
   }
 }
 Matrix::Matrix(d_matrix const &input) :
-    rows(input.rows), cols(input.cols), supply(input.m - rows), m(input.m), e(new double[m * cols]) {
-  CHECK_CUDA(cudaMemcpy (e, input.e, sizeof(double) * m * cols, cudaMemcpyDeviceToHost));
+    rows(input.rows), cols(input.cols), supply(input.m - rows), m(input.m), e(new float[m * cols]) {
+  CHECK_CUDA(cudaMemcpy (e, input.e, sizeof(float) * m * cols, cudaMemcpyDeviceToHost));
 }
 Matrix::~Matrix() {
   if (e != NULL) {

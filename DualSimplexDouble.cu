@@ -17,16 +17,16 @@ static void memInit(Matrix &matrix0, Matrix &matrix1) {
   data0.dev_matrix.rows = matrix0.rows;
   data0.dev_matrix.cols = MAX_BLOCKS;
   data0.dev_matrix.m = matrix0.m;
-  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_matrix.e, sizeof(double) * size));
+  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_matrix.e, sizeof(float) * size));
 
   data1.matrix = &matrix1;
   data1.dev_matrix.rows = matrix1.rows;
   data1.dev_matrix.cols = MAX_BLOCKS;
   data1.dev_matrix.m = matrix1.m;
-  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_matrix.e, sizeof(double) * size));
+  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_matrix.e, sizeof(float) * size));
 
-  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_col, sizeof(double) * matrix0.m));
-  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_col, sizeof(double) * matrix1.m));
+  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_col, sizeof(float) * matrix0.m));
+  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_col, sizeof(float) * matrix1.m));
 
   CHECK_CUDA(cudaStreamCreate(&data0.stream));
   CHECK_CUDA(cudaStreamCreate(&data1.stream));

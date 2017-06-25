@@ -1,15 +1,15 @@
 #include "BranchAndCut.h"
 #include <iostream>
 
-int branchPoint(Matrix &matrix, int &point, double &value, double &diff_best) {
+int branchPoint(Matrix &matrix, int &point, float &value, float &diff_best) {
   point = 0;
   value = 0.0;
   diff_best = 0.0;
 
   for (int i = 1; i < matrix.cols; i++){
-    double val = matrix.e[i + 0 * matrix.m];
+    float val = matrix.e[i + 0 * matrix.m];
     if ((val > 0.0) && (val < 1e+12)) {
-      double diff = val - round(val);
+      float diff = val - round(val);
       if (diff < 0) {
         diff = - diff;
       }
@@ -25,17 +25,17 @@ int branchPoint(Matrix &matrix, int &point, double &value, double &diff_best) {
   return 0;
 
 }
-int branchPoint (Matrix &matrix, int &point, double &value, double &diff_best, pseudocost &cost) {
-  double s_best = 0.0;
+int branchPoint (Matrix &matrix, int &point, float &value, float &diff_best, pseudocost &cost) {
+  float s_best = 0.0;
   point = 0;
   value = 0.0;
   diff_best = 0.0;
   int reliability = 0;
 
   for (int i = 0; i < matrix.cols; i++) {
-    double val = matrix.e[i + 0 * matrix.m];
+    float val = matrix.e[i + 0 * matrix.m];
     if ((val > 0.0) && (val < 1e+12)) {
-      double diff = val - round(val);
+      float diff = val - round(val);
       if (diff < 0) {
         diff = -diff;
       }

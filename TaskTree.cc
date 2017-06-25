@@ -1,16 +1,16 @@
 #include "BranchAndCut.h"
 #include "Epsilon.h"
 
-  taskTree::taskTree (int point, taskTree* prev, double value, int num, int num_of_int, double func, double diff) :
+  taskTree::taskTree (int point, taskTree* prev, float value, int num, int num_of_int, float func, float diff) :
     point(point), prev(prev), value(value), num(num), num_of_int(num_of_int) , func(func), diff(diff), cuts(NULL) {
     for (int i = 0; i < NUM_OF_DAUGHT; i++) {
       next[i] = NULL;
     }
   }
   int taskTree::branchTask(Matrix &matrix, pseudocost *cost) {
-    std::cout << "======branch task=======" << std::endl;
+    //std::cout << "======branch task=======" << std::endl;
     int branch_point = 0;
-    double val = 0;
+    float val = 0;
     func = matrix.e[0];
 
     if (cost == NULL) {
@@ -50,8 +50,8 @@
   int taskTree::countInts(Matrix &matrix) {
     num_of_int = 0;
     for (int i = 0; i < matrix.cols; i++) {
-      double val = matrix.e[i];
-      double diff = val - round(val);
+      float val = matrix.e[i];
+      float diff = val - round(val);
       if (diff < 0.0) {
         diff = - diff;
       }

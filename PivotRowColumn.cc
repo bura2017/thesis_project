@@ -19,8 +19,8 @@ int pivotColumn(Matrix const &matrix, const int row) {
         ret = j;
       } else {
         for (int i = 0; i < matrix.rows; i++) {
-          double val1 = - matrix.e[i + ret * matrix.m] / matrix.e[row + ret * matrix.m];
-          double val2 = - matrix.e[i + j * matrix.m] / matrix.e[row + j * matrix.m];
+          float val1 = - matrix.e[i + ret * matrix.m] / matrix.e[row + ret * matrix.m];
+          float val2 = - matrix.e[i + j * matrix.m] / matrix.e[row + j * matrix.m];
           int c = cmp(val1,val2);
           if (c == 1) {
             ret = j;

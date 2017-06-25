@@ -11,16 +11,16 @@
 struct pseudocost {
 private:
   int elems;
-  double *l_gains;//objective gains per unit change in variable x_j
+  float *l_gains;//objective gains per unit change in variable x_j
   int *l_num;
-  double *r_gains;
+  float *r_gains;
   int *r_num;
 
 public:
   pseudocost(int elems);
   ~pseudocost();
-  double score(int elem, double val);
-  int update(double gain, double diff, int point, bool left);
+  float score(int elem, float val);
+  int update(float gain, float diff, int point, bool left);
 };
 
 

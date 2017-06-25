@@ -4,7 +4,7 @@
 #include <iostream>
 
 static d_matrix dev_matrix;
-static double *dev_col;
+static float *dev_col;
 static int flag;
 
 static void memInit (const int rows, const int cols, const int m) {
@@ -15,9 +15,9 @@ static void memInit (const int rows, const int cols, const int m) {
   dev_matrix.rows = rows;
   dev_matrix.cols = cols;
   dev_matrix.m = m;
-  CHECK_CUDA (cudaMalloc ((void**)&dev_matrix.e, sizeof (double) * m * cols));
+  CHECK_CUDA (cudaMalloc ((void**)&dev_matrix.e, sizeof (float) * m * cols));
 
-  CHECK_CUDA (cudaMalloc((void**)&dev_col, sizeof(double) * rows));
+  CHECK_CUDA (cudaMalloc((void**)&dev_col, sizeof(float) * rows));
 }
 static void memFree () {
   cudaFree (dev_matrix.e);

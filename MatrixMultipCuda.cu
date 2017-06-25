@@ -10,10 +10,10 @@ void multip(d_matrix left, d_matrix right, d_matrix answ) {
 
   int box = row + col * block_rows;
 
-  __shared__ double left_box[BLOCK_SIZE * BLOCK_SIZE + 1];
-  __shared__ double right_box[BLOCK_SIZE * BLOCK_SIZE + 1];
+  __shared__ float left_box[BLOCK_SIZE * BLOCK_SIZE + 1];
+  __shared__ float right_box[BLOCK_SIZE * BLOCK_SIZE + 1];
 
-  double val = 0.0;
+  float val = 0.0;
 
   int bound = gridDim.y;
   int a_col = col, b_row = row;
@@ -42,7 +42,7 @@ int MatMul(const Matrix &cuts, const d_matrix dev_trans, Matrix &result) {
   temp.rows = cuts.rows;
   temp.cols = cuts.cols;
   temp.m = cuts.rows;
-  size_t size = sizeof(double) * cuts.rows * cuts.cols;
+  size_t size = sizeof(float) * cuts.rows * cuts.cols;
   CHECK_CUDA(cudaMalloc(&temp.e, size));
   CHECK_CUDA(cudaMemcpy(temp.e, cuts.e, size, cudaMemcpyHostToDevice));
 
@@ -53,7 +53,7 @@ int MatMul(const Matrix &cuts, const d_matrix dev_trans, Matrix &result) {
   d_cuts.cols *= side;
   d_cuts.rows *= side;
   d_cuts.m = cuts.rows;
-  size = sizeof(double) * d_cuts.rows * d_cuts.cols;
+  size = sizeof(float) * d_cuts.rows * d_cuts.cols;
   cudaMalloc(&d_cuts.e, size);
   iden_matr<<<d_cuts.cols,d_cuts.rows>>> (d_cuts);
   copyMatrix<<<temp.cols,temp.rows>>>(d_cuts,temp);
@@ -69,7 +69,7 @@ int MatMul(const Matrix &cuts, const d_matrix dev_trans, Matrix &result) {
   multip<<<dimGrid, dimBlock>>>(d_cuts, dev_trans, d_res);
 
   copyMatrix<<<cuts.cols,cuts.rows>>>(temp, d_res);
-  size = sizeof(double) * cuts.rows * cuts.cols;
+  size = sizeof(float) * cuts.rows * cuts.cols;
   cudaMemcpy(result.e, temp.e, size, cudaMemcpyDeviceToHost);
 
   cudaFree(d_res.e);

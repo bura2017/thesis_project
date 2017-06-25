@@ -33,15 +33,15 @@ struct taskTree {
   int point;
   taskTree *prev;
   taskTree *next[NUM_OF_DAUGHT];
-  double value;
+  float value;
   int num; //parent's daughter num
   int num_of_int;
-  double func;
-  double diff;
-  double *cuts;
+  float func;
+  float diff;
+  float *cuts;
 
-  taskTree (int point, taskTree* prev, double value, int num, int num_of_int = -1,
-      double func = 0.0, double diff = 0.0);
+  taskTree (int point, taskTree* prev, float value, int num, int num_of_int = -1,
+      float func = 0.0, float diff = 0.0);
   int branchTask(Matrix &matrix, pseudocost *cost);
   int countInts(Matrix &matrix);
   ~taskTree () ;
@@ -58,9 +58,9 @@ struct orderList {
 int branchAndBound (Matrix &input);
 void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task, d_matrix dev_trans);
 
-int branchPoint(Matrix &matrix, int &point, double &val, double &diff_best);
-int branchPoint (Matrix &matrix, int &point, double &value, double &diff_best, pseudocost &cost);
+int branchPoint(Matrix &matrix, int &point, float &val, float &diff_best);
+int branchPoint (Matrix &matrix, int &point, float &value, float &diff_best, pseudocost &cost);
 
-int mirCuts (Matrix &matrix, double *ineq);
+int mirCuts (Matrix &matrix, float *ineq);
 
 #endif /* BRANCHANDCUT_H_ */

@@ -3,26 +3,26 @@
 
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
-int mirCuts (Matrix &matrix, double *cuts) {
+int mirCuts (Matrix &matrix, float *cuts) {
   if (cuts != NULL) {
     std::cout << "ERROR cut already exists" << std::cout;
     return 0;
   }
 
-  double viol_best = 0.0;
+  float viol_best = 0.0;
   int row_best = 0;
 
-  double *ineq = new double [matrix.cols];
+  float *ineq = new float [matrix.cols];
   for (int i = 1; i < matrix.cols; i++) {
     ineq[0] = matrix.e[i + 0 * matrix.m];
-    double f_0 = ineq[0] - floor(ineq[0]);
+    float f_0 = ineq[0] - floor(ineq[0]);
     ineq[0] = floor(ineq[0]);
     for (int j = 1; j < matrix.cols; j++) {
-      double a_j = matrix.e[i + j * matrix.m];
+      float a_j = matrix.e[i + j * matrix.m];
       ineq[j] = floor(a_j) + MAX(a_j - floor(a_j) - f_0, 0) / (1 - f_0);
     }
 
-    double viol = 0.0;
+    float viol = 0.0;
     for (int j = 1; j < matrix.cols; j++) {
       viol += matrix.e[j] * ineq[j];
     }
@@ -37,10 +37,10 @@ int mirCuts (Matrix &matrix, double *cuts) {
 
   if (row_best > 0) {
     ineq[0] = matrix.e[row_best + 0 * matrix.m];
-    double f_0 = ineq[0] - floor(ineq[0]);
+    float f_0 = ineq[0] - floor(ineq[0]);
     ineq[0] = floor(ineq[0]);
     for (int j = 1; j < matrix.cols; j++) {
-      double a_j = matrix.e[row_best + j * matrix.m];
+      float a_j = matrix.e[row_best + j * matrix.m];
       ineq[j] = floor(a_j) + MAX(a_j - floor(a_j) - f_0, 0) / (1 - f_0);
     }
   }

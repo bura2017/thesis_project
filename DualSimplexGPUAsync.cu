@@ -18,15 +18,15 @@ static void memInit(const int rows, const int cols, int m) {
   data0.dev_matrix.rows = rows;
   data0.dev_matrix.cols = MAX_BLOCKS;
   data0.dev_matrix.m = m;
-  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_matrix.e, sizeof(double) * size));
+  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_matrix.e, sizeof(float) * size));
 
   data1.dev_matrix.rows = rows;
   data1.dev_matrix.cols = MAX_BLOCKS;
   data1.dev_matrix.m = m;
-  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_matrix.e, sizeof(double) * size));
+  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_matrix.e, sizeof(float) * size));
 
-  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_col, sizeof(double) * m));
-  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_col, sizeof(double) * m));
+  CHECK_CUDA (cudaMalloc ((void**)&data0.dev_col, sizeof(float) * m));
+  CHECK_CUDA (cudaMalloc ((void**)&data1.dev_col, sizeof(float) * m));
 
   CHECK_CUDA(cudaStreamCreate(&data0.stream));
   CHECK_CUDA(cudaStreamCreate(&data1.stream));

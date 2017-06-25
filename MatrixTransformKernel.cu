@@ -1,10 +1,10 @@
 #include "MatrixTransformation.h"
 
 __global__
-void matrixTransform(d_matrix matrix, int piv_row, double *col_e) {
-  __shared__ double cache[1025];
-  __shared__ double matr[1025];
-  __shared__ double piv_row_el;
+void matrixTransform(d_matrix matrix, int piv_row, float *col_e) {
+  __shared__ float cache[1025];
+  __shared__ float matr[1025];
+  __shared__ float piv_row_el;
   int row = threadIdx.x;
   int col = blockIdx.x; //column num
   int size = blockDim.x;

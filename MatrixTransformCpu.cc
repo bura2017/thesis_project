@@ -3,7 +3,7 @@
 #include <iostream>
 
 int matrixTransformCpu(Matrix &matrix, const int row, const int col) {
-  double div = - matrix.e[row + col * matrix.m];
+  float div = - matrix.e[row + col * matrix.m];
 
   for (int i = 0; i < matrix.rows; i++) {
     matrix.e[i + col * matrix.m] /= div;

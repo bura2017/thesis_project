@@ -32,7 +32,7 @@ void initMatrix(Matrix &matrix, const Matrix &input, taskTree * &task, d_matrix 
   cut_rows = 0;
   for (taskTree *branch = task; branch->prev != NULL; branch = branch->prev) {
     int point = branch->point;
-    double value = branch->value;
+    float value = branch->value;
     if (branch->num == 0) {
       cuts.e[cut_rows + point * cuts.m] = 1.0;
       cuts.e[cut_rows + 0 * cuts.m] = value;

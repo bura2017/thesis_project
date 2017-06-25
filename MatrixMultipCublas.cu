@@ -24,28 +24,28 @@ void cublas_multip (Matrix const &left, Matrix const &right, Matrix &answ) {
   dev_left.rows = left.rows;
   dev_left.cols = left.cols;
   dev_left.m = left.m;
-  CHECK_CUDA(cudaMalloc(&dev_left.e, sizeof (double) * dev_left.m * dev_left.cols));
-  CHECK_CUBLAS(cublasSetMatrix(left.rows, left.cols, sizeof(double), left.e, left.m,
+  CHECK_CUDA(cudaMalloc(&dev_left.e, sizeof (float) * dev_left.m * dev_left.cols));
+  CHECK_CUBLAS(cublasSetMatrix(left.rows, left.cols, sizeof(float), left.e, left.m,
       dev_left.e, dev_left.m));
 
   d_matrix dev_right;
   dev_right.rows = right.rows;
   dev_right.cols = right.cols;
-  CHECK_CUDA(cudaMalloc(&dev_right.e, sizeof (double) * dev_right.rows * dev_right.cols));
-  CHECK_CUBLAS(cublasSetMatrix(right.rows, right.cols, sizeof(double), right.e, right.rows,
+  CHECK_CUDA(cudaMalloc(&dev_right.e, sizeof (float) * dev_right.rows * dev_right.cols));
+  CHECK_CUBLAS(cublasSetMatrix(right.rows, right.cols, sizeof(float), right.e, right.rows,
       dev_right.e, dev_right.rows));
 
   d_matrix dev_answ;
   dev_answ.rows = answ.rows;
   dev_answ.cols = answ.cols;
   dev_answ.m = answ.m;
-  CHECK_CUDA(cudaMalloc(&dev_answ.e, sizeof (double) * dev_answ.m * dev_answ.cols));
-  double a = 1.0, b = 0.0;
+  CHECK_CUDA(cudaMalloc(&dev_answ.e, sizeof (float) * dev_answ.m * dev_answ.cols));
+  float a = 1.0, b = 0.0;
 
-  CHECK_CUBLAS(cublasDgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
+  CHECK_CUBLAS(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
       &a, dev_left.e, dev_left.m, dev_right.e, dev_right.m, &b, dev_answ.e, dev_answ.m));
 
-  CHECK_CUBLAS(cublasGetMatrix(answ.rows, answ.cols, sizeof(double), dev_answ.e, dev_answ.rows, answ.e, answ.rows));
+  CHECK_CUBLAS(cublasGetMatrix(answ.rows, answ.cols, sizeof(float), dev_answ.e, dev_answ.rows, answ.e, answ.rows));
 
   cublasDestroy(handle);
   cudaFree(dev_left.e);
@@ -63,21 +63,21 @@ void cublas_multip (Matrix const &left, d_matrix const &dev_right, Matrix &answ)
   dev_left.rows = left.rows;
   dev_left.cols = left.cols;
   dev_left.m = left.m;
-  CHECK_CUDA(cudaMalloc(&dev_left.e, sizeof (double) * dev_left.m * dev_left.cols));
-  CHECK_CUBLAS(cublasSetMatrix(left.rows, left.cols, sizeof(double), left.e, left.m,
+  CHECK_CUDA(cudaMalloc(&dev_left.e, sizeof (float) * dev_left.m * dev_left.cols));
+  CHECK_CUBLAS(cublasSetMatrix(left.rows, left.cols, sizeof(float), left.e, left.m,
       dev_left.e, dev_left.m));
 
   d_matrix dev_answ;
   dev_answ.rows = answ.rows;
   dev_answ.cols = answ.cols;
   dev_answ.m = answ.m;
-  CHECK_CUDA(cudaMalloc(&dev_answ.e, sizeof (double) * dev_answ.m * dev_answ.cols));
-  double a = 1.0, b = 0.0;
+  CHECK_CUDA(cudaMalloc(&dev_answ.e, sizeof (float) * dev_answ.m * dev_answ.cols));
+  float a = 1.0, b = 0.0;
 
-  CHECK_CUBLAS(cublasDgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
+  CHECK_CUBLAS(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
       &a, dev_left.e, dev_left.m, dev_right.e, dev_right.m, &b, dev_answ.e, dev_answ.m));
 
-  CHECK_CUBLAS(cublasGetMatrix(answ.rows, answ.cols, sizeof(double), dev_answ.e, dev_answ.rows, answ.e, answ.rows));
+  CHECK_CUBLAS(cublasGetMatrix(answ.rows, answ.cols, sizeof(float), dev_answ.e, dev_answ.rows, answ.e, answ.rows));
 
   cublasDestroy(handle);
 
@@ -90,10 +90,10 @@ void cublas_multip (d_matrix &dev_left, d_matrix &dev_right, d_matrix &dev_answ,
   cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);//host is default
   cublasSetAtomicsMode(handle, CUBLAS_ATOMICS_ALLOWED);// not allowed is default
 
-  double a = 1.0, b = 0.0;
+  float a = 1.0, b = 0.0;
 
   cublasSetStream(handle, stream);
-  CHECK_CUBLAS(cublasDgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
+  CHECK_CUBLAS(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
       &a, dev_left.e, dev_left.m, dev_right.e, dev_right.m, &b, dev_answ.e, dev_answ.m));
 
   cublasDestroy(handle);
@@ -105,9 +105,9 @@ void cublas_multip (d_matrix &dev_left, d_matrix &dev_right, d_matrix &dev_answ)
   cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_HOST);//host is default
   cublasSetAtomicsMode(handle, CUBLAS_ATOMICS_ALLOWED);// not allowed is default
 
-  double a = 1.0, b = 0.0;
+  float a = 1.0, b = 0.0;
 
-  CHECK_CUBLAS(cublasDgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
+  CHECK_CUBLAS(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, dev_left.rows, dev_right.cols, dev_left.cols,
       &a, dev_left.e, dev_left.m, dev_right.e, dev_right.m, &b, dev_answ.e, dev_answ.m));
 
   cublasDestroy(handle);

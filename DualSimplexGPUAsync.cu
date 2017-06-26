@@ -12,7 +12,7 @@ static void memInit(const int rows, const int cols, int m) {
   cudaDeviceProp prop;
   CHECK_CUDA(cudaGetDeviceProperties (&prop, 0));
 
-  threads = 256;//(m < prop.maxThreadsPerBlock ? m : prop.maxThreadsPerBlock);
+  threads = TRANSFORM_BLOCK_SIZE;//(m < prop.maxThreadsPerBlock ? m : prop.maxThreadsPerBlock);
   int size = MAX_BLOCKS * m;
 
   data0.dev_matrix.rows = rows;

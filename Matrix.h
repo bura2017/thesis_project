@@ -16,6 +16,7 @@
 #define MAX_BLOCKS 128
 #define MAX_LENG 1024
 #define BLOCK_SIZE 16
+#define TRANSFORM_BLOCK_SIZE 128
 
 #define GCD(x,y) {double a = x;\
   double b = y;                \

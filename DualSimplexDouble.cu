@@ -10,7 +10,7 @@ static void memInit(Matrix &matrix0, Matrix &matrix1) {
   cudaDeviceProp prop;
   CHECK_CUDA(cudaGetDeviceProperties (&prop, 0));
 
-  threads = (matrix0.rows < prop.maxThreadsPerBlock ? matrix0.rows : prop.maxThreadsPerBlock);
+  threads = TRANSFORM_BLOCK_SIZE;
   int size = MAX_BLOCKS * matrix0.m;
 
   data0.matrix = &matrix0;

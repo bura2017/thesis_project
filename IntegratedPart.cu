@@ -47,8 +47,8 @@ int main (int argc, char **argv) {
       sprintf(filename, "Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
 
       char fullname[MAX_LENG];
-      sprintf(fullname, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/%s", filename);
-      //sprintf(fullname, "TestGenerator/%s", filename);
+      //sprintf(fullname, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/%s", filename);
+      sprintf(fullname, "TestGenerator/%s", filename);
       if (access(fullname, 0) == -1) {
         gen_test(test_num, vars, ineqs, flag);
       }

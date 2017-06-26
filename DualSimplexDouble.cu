@@ -1,7 +1,6 @@
 #include "DualSimplex.h"
 #include <iostream>
 
-static int threads;
 static int flag;
 static data_full_task data0, data1;
 
@@ -10,7 +9,6 @@ static void memInit(Matrix &matrix0, Matrix &matrix1) {
   cudaDeviceProp prop;
   CHECK_CUDA(cudaGetDeviceProperties (&prop, 0));
 
-  threads = TRANSFORM_BLOCK_SIZE;
   int size = MAX_BLOCKS * matrix0.m;
 
   data0.matrix = &matrix0;
@@ -101,19 +99,19 @@ int *gpuDualSimplexDouble (Matrix &matrix0, Matrix &matrix1) {
     //std::cout << flag << ' ' << data1.piv_row << ' ' << data1.piv_col << std::endl;
 
     if (check[0] == 0 && check[1] == 0) {
-      matrixTransformDouble (threads, data0, data1);
+      matrixTransformDouble (data0, data1);
     }
     if (check[0] == 0 && check[1] != 0) {
       data_async data_0, data_1;
       data_0 = data0;
       data_1 = data1;
-      matrixTransformAsync (*data0.matrix, data0.piv_row, data0.piv_col, threads, data_0, data_1);
+      matrixTransformAsync (*data0.matrix, data0.piv_row, data0.piv_col, data_0, data_1);
     }
     if (check[0] != 0 && check[1] == 0) {
       data_async data_0, data_1;
       data_0 = data0;
       data_1 = data1;
-      matrixTransformAsync (*data1.matrix, data1.piv_row, data1.piv_col, threads, data_0, data_1);
+      matrixTransformAsync (*data1.matrix, data1.piv_row, data1.piv_col, data_0, data_1);
     }
     if (check[0] != 0 && check[1] != 0) {
       memFree();

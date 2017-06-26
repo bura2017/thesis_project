@@ -26,7 +26,7 @@ static bool getSizes (const int prev, const int col, const int max_col, int &cur
   }
   return false;
 }
-int matrixTransformAsync(Matrix &matrix, const int row, const int col, const int threads, data_async &data0, data_async &data1) {
+int matrixTransformAsync(Matrix &matrix, const int row, const int col, data_async &data0, data_async &data1) {
   double div = - matrix.e[row + col * matrix.m];
 
   for (int i = 0; i < matrix.rows; i++) {
@@ -61,8 +61,8 @@ int matrixTransformAsync(Matrix &matrix, const int row, const int col, const int
         sizeof(double) * blocks[1] * data1.dev_matrix.m, cudaMemcpyHostToDevice, data1.stream));
 
     //std::cout << threads << std::endl;
-    matrixTransform<<<MAX_BLOCKS,threads,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
-    matrixTransform<<<MAX_BLOCKS,threads,0,data1.stream>>>(data1.dev_matrix, row, data1.dev_col);
+    matrixTransform<<<MAX_BLOCKS,TRANSFORM_BLOCK_SIZE,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
+    matrixTransform<<<MAX_BLOCKS,TRANSFORM_BLOCK_SIZE,0,data1.stream>>>(data1.dev_matrix, row, data1.dev_col);
 
     CHECK_CUDA(cudaMemcpyAsync(data0.pin_matrix->e, data0.dev_matrix.e,
         sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
@@ -84,7 +84,7 @@ int matrixTransformAsync(Matrix &matrix, const int row, const int col, const int
         sizeof(double) * blocks[0] * matrix.m));
     CHECK_CUDA(cudaMemcpyAsync(data0.dev_matrix.e, data0.pin_matrix->e,
         sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyHostToDevice, data0.stream));
-    matrixTransform<<<MAX_BLOCKS,threads,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
+    matrixTransform<<<MAX_BLOCKS,TRANSFORM_BLOCK_SIZE,0,data0.stream>>>(data0.dev_matrix, row, data0.dev_col);
     CHECK_CUDA(cudaMemcpyAsync(data0.pin_matrix->e, data0.dev_matrix.e,
         sizeof(double) * blocks[0] * data0.dev_matrix.m, cudaMemcpyDeviceToHost, data0.stream));
     CHECK_CUDA(cudaStreamSynchronize(data0.stream));

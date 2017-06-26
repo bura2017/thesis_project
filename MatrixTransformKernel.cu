@@ -21,3 +21,29 @@ void matrixTransform(d_matrix matrix, int piv_row, double *col_e) {
   }
   __syncthreads();
 }
+
+__global__
+void matrixTransformSync(d_matrix matrix, int piv_row, int piv_col, double *col_e) {
+  __shared__ double cache[TRANSFORM_BLOCK_SIZE];
+  __shared__ double matr[TRANSFORM_BLOCK_SIZE];
+  __shared__ double piv_row_el;
+  int row = threadIdx.x;
+  int col = blockIdx.x;
+  int size = blockDim.x;
+
+  if (threadIdx.x == 0) {
+    piv_row_el = matrix.e[piv_row + col * matrix.m];
+  }
+  __syncthreads();
+    for (int i_row = row; i_row < matrix.rows; i_row += size) {
+        cache[row] = col_e[i_row];
+        if (col != piv_col) {
+          matr[row] = matrix.e[i_row + col * matrix.m];
+          matr[row] += piv_row_el * cache[row];
+        } else {
+          matr[row] = cache[row];
+        }
+        matrix.e[i_row + col * matrix.m] = matr[row];
+  }
+  __syncthreads();
+}

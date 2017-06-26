@@ -3,7 +3,6 @@
 #include <cuda_runtime.h>
 #include <iostream>
 
-static int threads;
 static int flag;
 static data_async data0, data1;
 
@@ -12,7 +11,6 @@ static void memInit(const int rows, const int cols, int m) {
   cudaDeviceProp prop;
   CHECK_CUDA(cudaGetDeviceProperties (&prop, 0));
 
-  threads = TRANSFORM_BLOCK_SIZE;//(m < prop.maxThreadsPerBlock ? m : prop.maxThreadsPerBlock);
   int size = MAX_BLOCKS * m;
 
   data0.dev_matrix.rows = rows;
@@ -78,6 +76,6 @@ int gpuDualSimplexAsync (Matrix &matrix) {
     }
 //std::cout << flag << ' ' << pivot_row << ' ' << pivot_col << std::endl;
 
-    matrixTransformAsync (matrix, pivot_row, pivot_col, threads, data0, data1);
+    matrixTransformAsync (matrix, pivot_row, pivot_col, data0, data1);
   }
 }

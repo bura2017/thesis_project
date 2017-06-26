@@ -10,11 +10,11 @@
 
 #include "Matrix.h"
 
-#define SHARED_MEM_SIZE 1024
+//#define SHARED_MEM_SIZE 1024
 
 int pivotRow(Matrix const &matrix);
 int pivotColumn(Matrix const &matrix, const int row);
 
-__global__ void pivotRowColumn (d_matrix matrix, int *pivot_row, int *pivot_col);
+//__global__ void pivotRowColumn (d_matrix matrix, int *pivot_row, int *pivot_col);
 
 #endif /* PIVOTROWCOLUMN_H_ */

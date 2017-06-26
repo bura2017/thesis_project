@@ -36,10 +36,11 @@ struct data_async {
   }
 };
 int matrixTransformCpu(Matrix &matrix, const int row, const int col);
-int matrixTransformAsync(Matrix &matrix, const int row, const int col, const int threads, data_async &data0, data_async &data1);
+int matrixTransformAsync(Matrix &matrix, const int row, const int col, data_async &data0, data_async &data1);
 int matrixTransformSync(Matrix &matrix, const int row, const int col, d_matrix &dev_matrix, double *dev_col);
 
 __global__ void matrixTransform(d_matrix matrix, int piv_row, double *col_e);
-int matrixTransformDouble (int threads, data_full_task data0, data_full_task data1);
+__global__ void matrixTransformSync(d_matrix matrix, int piv_row, int piv_col, double *col_e);
+int matrixTransformDouble (data_full_task data0, data_full_task data1);
 
 #endif /* MATRIXTRANSFORMATION_H_ */

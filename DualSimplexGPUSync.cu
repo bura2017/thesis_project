@@ -7,17 +7,19 @@ static d_matrix dev_matrix;
 static double *dev_col;
 static int flag;
 
-static void memInit (const int rows, const int cols, const int m) {
+static void memInit (Matrix &matrix) {
   flag = 0;
   cudaDeviceProp prop;
   CHECK_CUDA(cudaGetDeviceProperties (&prop, 0));
 
-  dev_matrix.rows = rows;
-  dev_matrix.cols = cols;
-  dev_matrix.m = m;
-  CHECK_CUDA (cudaMalloc ((void**)&dev_matrix.e, sizeof (double) * m * cols));
+  dev_matrix.rows = matrix.rows;
+  dev_matrix.cols = matrix.cols;
+  dev_matrix.m = matrix.m;
+  CHECK_CUDA (cudaMalloc ((void**)&dev_matrix.e, sizeof (double) * matrix.m * matrix.cols));
+  CHECK_CUDA (cudaMemcpy (dev_matrix.e, matrix.e, sizeof(double) * matrix.m * matrix.cols,
+      cudaMemcpyHostToDevice));
 
-  CHECK_CUDA (cudaMalloc((void**)&dev_col, sizeof(double) * rows));
+  CHECK_CUDA (cudaMalloc((void**)&dev_col, sizeof(double) * matrix.rows));
 }
 static void memFree () {
   cudaFree (dev_matrix.e);
@@ -28,7 +30,7 @@ static void memFree () {
 int gpuDualSimplexSync (Matrix &matrix) {
   CHECK_NULL(matrix.e);
 
-  memInit(matrix.rows, matrix.cols, matrix.m);
+  memInit(matrix);
 
   while (1) {
     flag ++;

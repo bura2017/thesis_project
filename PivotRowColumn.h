@@ -14,7 +14,6 @@
 
 int pivotRow(Matrix const &matrix);
 int pivotColumn(Matrix const &matrix, const int row);
-
-//__global__ void pivotRowColumn (d_matrix matrix, int *pivot_row, int *pivot_col);
+__global__ void matrixChoosePivot(d_matrix matrix, int *num_cols, int pivot_row, int bound_y);
 
 #endif /* PIVOTROWCOLUMN_H_ */

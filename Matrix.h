@@ -17,6 +17,7 @@
 #define MAX_LENG 1024
 #define BLOCK_SIZE 16
 #define TRANSFORM_BLOCK_SIZE 128
+#define CPU_COLS 1
 
 #define GCD(x,y) {double a = x;\
   double b = y;                \

@@ -62,7 +62,7 @@ void matrixTransformDev(d_matrix matrix, int piv_row, int piv_col, double *dev_c
   int el_box = row_box + col_box * BLOCK_SIZE;
   int bound = (matrix.rows - 1) / BLOCK_SIZE + 1;
 
-  int col = 1 + col_box + blockIdx.x * BLOCK_SIZE;
+  int col = CPU_COLS + col_box + blockIdx.x * BLOCK_SIZE;
   if (threadIdx.x == 0) {
     piv_row_el[col_box] = matrix.e[piv_row + col * matrix.m];
   }
@@ -71,7 +71,7 @@ void matrixTransformDev(d_matrix matrix, int piv_row, int piv_col, double *dev_c
   int piv_row_box = piv_row_next / BLOCK_SIZE;
   int row = row_box + piv_row_box * BLOCK_SIZE;
   cache[el_box] = matrix.e[row + col * matrix.m];
-  col_e[el_box] = dev_col[row]; //????
+  col_e[el_box] = dev_col[row];
   if (col != piv_col) {
     cache[el_box] += piv_row_el[col_box] * col_e[el_box];
   } else {

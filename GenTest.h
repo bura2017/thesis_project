@@ -8,7 +8,6 @@ void gen_test(int test_num, int vars, int ineqs, int &flag) {
   char filename[MAX_LEN];
   const int cols = vars + 1;
   const int rows = 1 + vars + ineqs;
-  //sprintf (filename, "/home/valerius/cuda-workspace/Benchmarks_txt/TestGenerator/Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
   sprintf(filename, "TestGenerator/Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
 
   std::ofstream of (filename);

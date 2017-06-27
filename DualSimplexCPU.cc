@@ -28,7 +28,9 @@ int cpuDualSimplex (Matrix &matrix) {
       return -flag;
     }
 
-    //std::cout << "flag = " << flag << ", row = " << pivot_row << ", col = " << pivot_col << std::endl;
+    if (flag < 11) {
+      //std::cout << "flag = " << flag << ", row = " << pivot_row << ", col = " << pivot_col << std::endl;
+    }
 
     int err = matrixTransformCpu (matrix, pivot_row, pivot_col);
     if (err) {

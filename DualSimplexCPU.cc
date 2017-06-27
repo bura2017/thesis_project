@@ -34,7 +34,6 @@ int cpuDualSimplex (Matrix &matrix) {
     if (err) {
       return 0;
     }
-
   }
 
   return false;

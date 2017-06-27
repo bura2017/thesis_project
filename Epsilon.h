@@ -10,13 +10,13 @@
 
 #include <iostream>
 
+#define EPSILON 1e-10
+
 inline int cmp(double x, double y) {
-  //static double epsilon = pow (10, - 10 * log10(x * y));
-  static double epsilon = 1e-10;
-  if (x > y + epsilon) {
+  if (x > y + EPSILON) {
     return 1;
   }
-  if (x < y - epsilon) {
+  if (x < y - EPSILON) {
     return -1;
   }
   return 0;

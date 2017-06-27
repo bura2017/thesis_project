@@ -18,6 +18,7 @@
 int cpuDualSimplex (Matrix &matrix);
 int gpuDualSimplexAsync (Matrix &matrix);
 int gpuDualSimplexSync (Matrix &matrix);
+int gpuDualSimplexSyncDev (Matrix &matrix);
 
 int *gpuDualSimplexDouble (Matrix &matrix0, Matrix &matrix1);
 

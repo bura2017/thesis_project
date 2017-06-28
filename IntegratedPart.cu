@@ -20,9 +20,9 @@ static int testingSimplex (int vars, int ineqs, int test_num, double &cpu_time, 
 
   char fullname[MAX_LENG];
   sprintf(fullname, "TestGenerator/%s", filename);
-  if (access(fullname, 0) == -1) {
+  //if (access(fullname, 0) == -1) {
     gen_test(test_num, vars, ineqs, flag);
-  }
+  //}
 
   Matrix input(fullname);
 
@@ -62,6 +62,7 @@ static int testingSimplex (int vars, int ineqs, int test_num, double &cpu_time, 
     time.stop();
     //std::cout << time.time() << std::endl;
     if (iters_dev != iters_man) {
+      return 1;
       std::cout << iters_dev << " != " << iters_man << std::endl;
       std::cout << "ERROR wrong answer dev sync" << std::endl;
     }
@@ -83,15 +84,16 @@ int main (int argc, char **argv) {
     std::cout << "Integrated device gives speed up from zero-copy memory" << std::endl;
   }
 
+  std::ofstream results_cpu("results_cpu.txt");
   std::ofstream results_dev("results_dev.txt");
 
-  for (int i = 500; i < 1501; i += 50) {
+  for (int i = 511; i < 2048; i += 64) {
     double cpu_time = 0.0;
     double dev_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
     while (test_num < 1) {
-      int vars = 500;
+      int vars = 512;
       int ineqs = i;
 
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time)) {
@@ -99,37 +101,41 @@ int main (int argc, char **argv) {
       }
       test_num++;
     }
-    results_dev << cpu_time / dev_time << std::endl;
-    std::cout << "Result dev sync " << cpu_time / dev_time << std::endl;
+    results_cpu << cpu_time << std::endl;
+    results_dev << dev_time << std::endl;
+    std::cout << vars + 1 << "x" << ineqs + 1 << ' ' << cpu_time << ' ' << dev_time << std::endl;
   }
 
+  results_cpu << std::endl;
   results_dev << std::endl;
-  for (int i = 500; i < 1501; i += 50) {
+  for (int i = 512; i < 2049; i += 64) {
     double cpu_time = 0.0;
     double dev_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
     while (test_num < 1) {
       int vars = i;
-      int ineqs = 2000 - i;
+      int ineqs = 2048;
 
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time)) {
         continue;
       }
       test_num++;
     }
-    results_dev << cpu_time / dev_time << std::endl;
-    std::cout << "Result dev sync " << cpu_time / dev_time << std::endl;
-  }
+    results_cpu << cpu_time << std::endl;
+    results_dev << dev_time << std::endl;
+    std::cout << vars + 1 << "x" << ineqs + 1 << ' ' << cpu_time << ' ' << dev_time << std::endl;
+  }/**/
 
+  results_cpu << std::endl;
   results_dev << std::endl;
-  for (int i = 500; i < 1001; i += 50) {
+  for (int i = 511; i < 1024; i += 64) {
     double cpu_time = 0.0;
     double dev_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
     while (test_num < 1) {
-      int vars = i;
+      int vars = i + 1;
       int ineqs = i;
 
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time)) {
@@ -137,8 +143,9 @@ int main (int argc, char **argv) {
       }
       test_num++;
     }
-    results_dev << cpu_time / dev_time << std::endl;
-    std::cout << "Result dev sync " << cpu_time / dev_time << std::endl;
+    results_cpu << cpu_time << std::endl;
+    results_dev << dev_time << std::endl;
+    std::cout << vars + 1 << "x" << ineqs + 1 << ' ' << cpu_time << ' ' << dev_time << std::endl;
   }
 
   return 0;

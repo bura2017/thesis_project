@@ -63,10 +63,10 @@ int gpuDualSimplexSyncDev (Matrix &matrix) {
 
   while (1) {
     flag ++;
-    if (flag > 1000000000000) {
-      std::cout << "ups" << std::endl;
+    if (flag % 10000 == 0) {
+      //std::cout << "ups" << std::endl;
       memFree();
-      return 0;
+      return 10000;
     }
     //std::cout << "flag = " << flag << ", row = " << pivot_row << ", col = " << pivot_col << std::endl;
 

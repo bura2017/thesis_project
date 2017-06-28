@@ -13,9 +13,9 @@ int cpuDualSimplex (Matrix &matrix) {
 
   while (1) {
     flag ++;
-    if (flag % 1000000 == 0) {
-      std::cout << "ups" << std::endl;
-      return 0;
+    if (flag % 10000 == 0) {
+      //std::cout << "ups" << std::endl;
+      return 10000;
     }
 
     int pivot_row = pivotRow (matrix);

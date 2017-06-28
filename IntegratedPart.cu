@@ -92,9 +92,9 @@ int main (int argc, char **argv) {
     double dev_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
+    int vars = 512;
+    int ineqs = i;
     while (test_num < 1) {
-      int vars = 512;
-      int ineqs = i;
 
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time)) {
         continue;
@@ -113,9 +113,9 @@ int main (int argc, char **argv) {
     double dev_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
+    int vars = i;
+    int ineqs = 2048;
     while (test_num < 1) {
-      int vars = i;
-      int ineqs = 2048;
 
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time)) {
         continue;
@@ -134,9 +134,9 @@ int main (int argc, char **argv) {
     double dev_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
+    int vars = i + 1;
+    int ineqs = i;
     while (test_num < 1) {
-      int vars = i + 1;
-      int ineqs = i;
 
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time)) {
         continue;

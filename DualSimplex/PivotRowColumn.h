@@ -15,7 +15,7 @@
 #ifndef PIVOTROWCOLUMN_H_
 #define PIVOTROWCOLUMN_H_
 
-#include "Matrix.h"
+#include "../Matrix.h"
 
 int pivotRow(Matrix const &matrix);
 int pivotColumn(Matrix const &matrix, const int row);

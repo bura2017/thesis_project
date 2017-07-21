@@ -20,7 +20,7 @@
 static int num_of_probs;
 
 static void memFree(d_matrix transition) {
-  std::cout << "branch-and-cut result " << (num_of_probs > 0 ? "sat" : "unsat") << num_of_probs << " probs " << std::endl;
+  std::cout << "branch-and-cut result " << (num_of_probs > 0 ? "sat" : "unsat") << ' ' << num_of_probs << " probs " << std::endl;
   dev_trans_free(transition);
 }
 
@@ -28,7 +28,7 @@ int branchAndBound (Matrix &input) {
   std::cout << "Start branch and bound ..." << std::endl;
   num_of_probs = 1;
 
-  if (gpuDualSimplexDevSync (input) < 0) {
+  if (gpuDualSimplexSyncDev (input) < 0) {
     std::cout << "first unsat" << std::endl;
     return -num_of_probs;
   }
@@ -52,12 +52,6 @@ int branchAndBound (Matrix &input) {
 
   while (1) {
     num_of_probs++;
-    std::cout << std::endl << "num_of_probs " << num_of_probs << std::endl;
-
-    if (num_of_probs % 100 == 0) {
-      std::cout << "ups num_of_probs = " << num_of_probs << std::endl;
-      return -num_of_probs;
-    }
     if (num_of_probs == cost_check) {
       cost_rel = &cost;
     }

@@ -84,7 +84,7 @@ static int testingSimplex (int vars, int ineqs, int test_num, double &cpu_time, 
     int supply = input.rows % (BLOCK_SIZE * 2);
     supply = (supply > 0 ? BLOCK_SIZE * 2 - supply : 0);
     time.start();
-    Matrix matrix(input.supply);
+    Matrix matrix(input, supply);
     int iters = branchAndBound(matrix);
     time.stop();
     bac_time += time.time();
@@ -115,9 +115,9 @@ int main (int argc, char **argv) {
     double bac_time = 0.0;
     int test_num = 0;
     flag = time(NULL);
-    int vars = 512;
-    int ineqs = 511;
-    while (test_num < 10) {
+    int vars = 20;
+    int ineqs = 20;
+    while (test_num < 5) {
       if (testingSimplex(vars, ineqs, test_num, cpu_time, dev_time, bac_time)) {
         continue;
       }

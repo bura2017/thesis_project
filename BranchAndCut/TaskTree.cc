@@ -22,7 +22,6 @@
     }
   }
   int taskTree::branchTask(Matrix &matrix, pseudocost *cost) {
-    std::cout << "======branch task=======" << std::endl;
     int branch_point = 0;
     double val = 0;
     func = matrix.e[0];

@@ -12,25 +12,24 @@
  * limitations under the License.
  */
 
-#include "HandleError.h"
-#include "Epsilon.h"
+#ifndef PSEUDOCOSTBRANCHING_H_
+#define PSEUDOCOSTBRANCHING_H_
 
-int checkCorrect (Matrix &input, Matrix &output) {
-  double epsilon = 0.1;
-  double *result = new double [output.cols - 1];
-  for (int i = 1; i < output.cols; i++) {
-    result[i - 1] = output.e[i];
-  }
-  for (int i = input.cols; i < input.rows; i++) {
-    double check = 0.0;
-    for (int j = 1; j < input.cols; j++) {
-      check += result[j - 1] * input.e[i + j * input.m];
-    }
-    if (check > input.e[i + 0 * input.m] + epsilon) {
-      delete [] result;
-      return 0;
-    }
-  }
-  delete [] result;
-  return 1;
-}
+struct pseudocost {
+private:
+  int elems;
+  double *l_gains;//objective gains per unit change in variable x_j
+  int *l_num;
+  double *r_gains;
+  int *r_num;
+
+public:
+  pseudocost(int elems);
+  ~pseudocost();
+  double score(int elem, double val);
+  int update(double gain, double diff, int point, bool left);
+};
+
+
+
+#endif /* PSEUDOCOSTBRANCHING_H_ */

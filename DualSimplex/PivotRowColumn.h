@@ -12,25 +12,13 @@
  * limitations under the License.
  */
 
-#include "HandleError.h"
-#include "Epsilon.h"
+#ifndef PIVOTROWCOLUMN_H_
+#define PIVOTROWCOLUMN_H_
 
-int checkCorrect (Matrix &input, Matrix &output) {
-  double epsilon = 0.1;
-  double *result = new double [output.cols - 1];
-  for (int i = 1; i < output.cols; i++) {
-    result[i - 1] = output.e[i];
-  }
-  for (int i = input.cols; i < input.rows; i++) {
-    double check = 0.0;
-    for (int j = 1; j < input.cols; j++) {
-      check += result[j - 1] * input.e[i + j * input.m];
-    }
-    if (check > input.e[i + 0 * input.m] + epsilon) {
-      delete [] result;
-      return 0;
-    }
-  }
-  delete [] result;
-  return 1;
-}
+#include "Matrix.h"
+
+int pivotRow(Matrix const &matrix);
+int pivotColumn(Matrix const &matrix, const int row);
+__global__ void matrixChoosePivot(d_matrix matrix, int *num_cols, int pivot_row, int bound_y);
+
+#endif /* PIVOTROWCOLUMN_H_ */

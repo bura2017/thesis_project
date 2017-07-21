@@ -12,25 +12,15 @@
  * limitations under the License.
  */
 
-#include "HandleError.h"
-#include "Epsilon.h"
+#ifndef MATRIXTRANSITION_H_
+#define MATRIXTRANSITION_H_
 
-int checkCorrect (Matrix &input, Matrix &output) {
-  double epsilon = 0.1;
-  double *result = new double [output.cols - 1];
-  for (int i = 1; i < output.cols; i++) {
-    result[i - 1] = output.e[i];
-  }
-  for (int i = input.cols; i < input.rows; i++) {
-    double check = 0.0;
-    for (int j = 1; j < input.cols; j++) {
-      check += result[j - 1] * input.e[i + j * input.m];
-    }
-    if (check > input.e[i + 0 * input.m] + epsilon) {
-      delete [] result;
-      return 0;
-    }
-  }
-  delete [] result;
-  return 1;
-}
+#include "../Matrix.h"
+
+int dev_trans_init(d_matrix &dev_trans, Matrix &input);
+int dev_trans_free(d_matrix &dev_trans);
+__global__ void fill_right_trans(d_matrix matrix, int col, double *row);
+void modifyTransMatrAsync (int flag, int pivot_row, int pivot_col, d_matrix &temp_trans_1, d_matrix &temp_trans_2,
+    d_matrix right_temp, cudaStream_t str_tr_ma);
+
+#endif /* MATRIXTRANSITION_H_ */

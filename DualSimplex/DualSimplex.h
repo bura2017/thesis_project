@@ -12,25 +12,20 @@
  * limitations under the License.
  */
 
-#include "HandleError.h"
-#include "Epsilon.h"
+#ifndef DUALSIMPLEX_H_
+#define DUALSIMPLEX_H_
 
-int checkCorrect (Matrix &input, Matrix &output) {
-  double epsilon = 0.1;
-  double *result = new double [output.cols - 1];
-  for (int i = 1; i < output.cols; i++) {
-    result[i - 1] = output.e[i];
-  }
-  for (int i = input.cols; i < input.rows; i++) {
-    double check = 0.0;
-    for (int j = 1; j < input.cols; j++) {
-      check += result[j - 1] * input.e[i + j * input.m];
-    }
-    if (check > input.e[i + 0 * input.m] + epsilon) {
-      delete [] result;
-      return 0;
-    }
-  }
-  delete [] result;
-  return 1;
-}
+#include "../HandleError.h"
+#include "../Matrix.h"
+#include "../MatrixMultip/MatrixMultip.h"
+#include "PivotRowColumn.h"
+#include "../MatrixTransform/MatrixTransformation.h"
+
+int cpuDualSimplex (Matrix &matrix);
+int gpuDualSimplexAsync (Matrix &matrix);
+int gpuDualSimplexSync (Matrix &matrix);
+int gpuDualSimplexSyncDev (Matrix &matrix);
+
+int *gpuDualSimplexDouble (Matrix &matrix0, Matrix &matrix1);
+
+#endif /* DUALSIMPLEX_H_ */

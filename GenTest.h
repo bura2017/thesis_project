@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2016 ISP RAS
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include <fstream>
 
 #define MAX_LEN 1024
@@ -7,7 +21,7 @@ void gen_test(int test_num, int vars, int ineqs, int &flag) {
   srand (flag);
   char filename[MAX_LEN];
   const int cols = vars + 1;
-  const int rows = 1 + ineqs;
+  const int rows = 1 + ineqs + vars;
   sprintf(filename, "TestGenerator/Vars-%d_Ineqs-%d_%d.ilp", vars, ineqs, test_num);
 
   std::ofstream of (filename);
@@ -20,7 +34,7 @@ void gen_test(int test_num, int vars, int ineqs, int &flag) {
   for (int i = 1; i < cols; i++) {
     of << "1 1" << std::endl;
   }
-  /*for (int i = 1; i < cols; i++) {
+  for (int i = 1; i < cols; i++) {
     for (int j = 0; j < cols; j++) {
       if (i == j) {
         of << "-1 1" << std::endl;
